@@ -24,6 +24,7 @@ const Home = () => {
     latitude: 55.6040469,
   });
   const [distance, setDistance] = useState(0);
+  const [approachAlertShown, setApproachAlertShown] = useState(false);
 
   const updateCurrentLocation = (position) => {
     setCurrentLocation({
@@ -40,6 +41,14 @@ const Home = () => {
       markerPosition.latitude,
       markerPosition.longitude
     );
+    const threshold = 10;
+    if (newDistance < threshold && !approachAlertShown) {
+      setApproachAlertShown(true);
+      alert("Marker approached!");
+    } else if (newDistance >= threshold && approachAlertShown) {
+      // Reset the flag when the distance is above the threshold again
+      setApproachAlertShown(false);
+    }
 
     // Update the distance state
     setDistance(newDistance);
@@ -103,7 +112,7 @@ const Home = () => {
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
         >
           <GeolocateControl />
-          <NavigationControl />
+          <NavigationControl position="bottom-right" />
           <FullscreenControl />
           <Marker
             longitude={markerPosition.longitude}

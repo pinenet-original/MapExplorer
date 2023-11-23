@@ -54,29 +54,6 @@ const Home = () => {
     setDistance(newDistance);
   }, [currentLocation, markerPosition]);
 
-  // useEffect(() => {
-  //   const getLocation = () => {
-  //     if (navigator.geolocation) {
-  //       const options = { enableHighAccuracy: true };
-
-  //       const watchId = navigator.geolocation.watchPosition(
-  //         updateCurrentLocation,
-  //         (error) => {
-  //           console.error("Error getting location:", error.message);
-  //         },
-  //         options
-  //       );
-
-  //       // Cleanup the watchPosition when the component unmounts
-  //       return () => navigator.geolocation.clearWatch(watchId);
-  //     } else {
-  //       console.error("Geolocation is not supported by this browser.");
-  //     }
-  //   };
-
-  //   getLocation();
-  // }, []);
-
   return (
     <div
       style={{
@@ -107,7 +84,7 @@ const Home = () => {
         <ReactMapGL
           style={{ marginTop: "40px", width: "300px" }}
           {...viewport}
-          onMove={(e) => setViewport(e.viewport)}
+          onMove={(e) => setViewport(e)}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
           attributionControl={false}

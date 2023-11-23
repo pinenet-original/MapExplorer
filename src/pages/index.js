@@ -20,8 +20,8 @@ const Home = () => {
     latitude: 0,
   });
   const [markerPosition, setMarkerPosition] = useState({
-    longitude: 26.427082983048223,
-    latitude: 55.60809820197926,
+    longitude: 26.4319901,
+    latitude: 55.6040469,
   });
   const [distance, setDistance] = useState(0);
 

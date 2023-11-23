@@ -7,21 +7,21 @@ import ReactMapGL, {
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapInfo from "@/components/MapInfo";
+import { calculateDistance } from "@/utils/helpers";
 
 const Home = () => {
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
-    // center: [26.432730917247454, 55.60407906787367],
-    zoom: 10,
+    zoom: 15,
   });
   const [currentLocation, setCurrentLocation] = useState({
     longitude: 0,
     latitude: 0,
   });
   const [markerPosition, setMarkerPosition] = useState({
-    longitude: 26.4277098,
-    latitude: 55.6103488,
+    longitude: 26.427082983048223,
+    latitude: 55.60809820197926,
   });
 
   useEffect(() => {
@@ -45,12 +45,19 @@ const Home = () => {
 
     getLocation();
   }, []);
+  const distance = calculateDistance(
+    currentLocation.latitude,
+    currentLocation.longitude,
+    markerPosition.latitude,
+    markerPosition.longitude
+  );
 
   return (
     <div style={{ width: "90vw", height: "80vh" }}>
       <MapInfo
         latitude={currentLocation.latitude}
         longitude={currentLocation.longitude}
+        distance={distance}
       />
 
       <ReactMapGL

@@ -64,6 +64,7 @@ const Home = () => {
         border: "solid 1px red",
       }}
     >
+      <h1>Map Explorer</h1>
       <MapInfo
         latitude={currentLocation.latitude}
         longitude={currentLocation.longitude}
@@ -72,7 +73,7 @@ const Home = () => {
 
       <div
         style={{
-          height: "80vh",
+          height: "40vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",

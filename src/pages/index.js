@@ -89,7 +89,7 @@ const Home = () => {
         </ReactMapGL> */}
       </div>
       <div>
-        <h1>Map Explorer</h1>
+        <h1 style={{ color: "red" }}>Map Explorer</h1>
         <MapInfo
           latitude={currentLocation.latitude}
           longitude={currentLocation.longitude}

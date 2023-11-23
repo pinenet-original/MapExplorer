@@ -60,9 +60,16 @@ const Home = () => {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        // maxWidth: "100%",
       }}
     >
+      <div>
+        <h1 style={{ color: "red" }}>Map Explorer</h1>
+        <MapInfo
+          latitude={currentLocation.latitude}
+          longitude={currentLocation.longitude}
+          distance={distance}
+        />
+      </div>
       <div
         style={{
           height: "40vh",
@@ -73,7 +80,7 @@ const Home = () => {
         }}
       >
         <ReactMapGL
-          style={{ border: "solid 1px red", marginTop: "40px", width: "300px" }}
+          style={{ marginTop: "40px", width: "300px" }}
           {...viewport}
           onMove={(e) => setViewport(e.viewport)}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
@@ -87,14 +94,6 @@ const Home = () => {
             latitude={markerPosition.latitude}
           />
         </ReactMapGL>
-      </div>
-      <div>
-        <h1 style={{ color: "red" }}>Map Explorer</h1>
-        <MapInfo
-          latitude={currentLocation.latitude}
-          longitude={currentLocation.longitude}
-          distance={distance}
-        />
       </div>
     </div>
   );

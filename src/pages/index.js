@@ -72,7 +72,7 @@ const Home = () => {
           textAlign: "center",
         }}
       >
-        <ReactMapGL
+        {/* <ReactMapGL
           // style={{ border: "solid 1px red", marginTop: "40px", width: "300px" }}
           {...viewport}
           onMove={(e) => setViewport(e.viewport)}
@@ -86,7 +86,7 @@ const Home = () => {
             longitude={markerPosition.longitude}
             latitude={markerPosition.latitude}
           />
-        </ReactMapGL>
+        </ReactMapGL> */}
       </div>
       <div>
         <h1>Map Explorer</h1>

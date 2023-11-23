@@ -53,7 +53,16 @@ const Home = () => {
   );
 
   return (
-    <div style={{ width: "90vw", height: "80vh" }}>
+    <div
+      style={{
+        width: "90vw",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        textAlign: "center",
+      }}
+    >
       <MapInfo
         latitude={currentLocation.latitude}
         longitude={currentLocation.longitude}

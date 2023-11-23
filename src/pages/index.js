@@ -33,6 +33,19 @@ const Home = () => {
     });
   };
 
+  const handleViewportChange = (newViewport) => {
+    setViewport(newViewport);
+  };
+
+  const handleGeolocate = (position) => {
+    updateCurrentLocation(position);
+    handleViewportChange({
+      ...viewport,
+      longitude: position.coords.longitude,
+      latitude: position.coords.latitude,
+    });
+  };
+
   useEffect(() => {
     // Calculate distance whenever currentLocation changes
     const newDistance = calculateDistance(
@@ -84,14 +97,15 @@ const Home = () => {
         <ReactMapGL
           style={{ marginTop: "40px", width: "300px" }}
           {...viewport}
-          onMove={(e) => setViewport(e)}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
           attributionControl={false}
+          onViewportChange={handleViewportChange}
+          onMove={(e) => setViewport(e.viewport)}
         >
           <GeolocateControl
             trackUserLocation={true}
-            onGeolocate={(position) => updateCurrentLocation(position)}
+            onGeolocate={handleGeolocate}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />

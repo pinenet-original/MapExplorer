@@ -20,8 +20,8 @@ const Home = () => {
     latitude: 0,
   });
   const [markerPosition, setMarkerPosition] = useState({
-    longitude: 26.4319901,
-    latitude: 55.6040469,
+    longitude: 26.4318921,
+    latitude: 55.6040879,
   });
   const [distance, setDistance] = useState(0);
   const [approachAlertShown, setApproachAlertShown] = useState(false);
@@ -54,6 +54,29 @@ const Home = () => {
     setDistance(newDistance);
   }, [currentLocation, markerPosition]);
 
+  // useEffect(() => {
+  //   const getLocation = () => {
+  //     if (navigator.geolocation) {
+  //       const options = { enableHighAccuracy: true };
+
+  //       const watchId = navigator.geolocation.watchPosition(
+  //         updateCurrentLocation,
+  //         (error) => {
+  //           console.error("Error getting location:", error.message);
+  //         },
+  //         options
+  //       );
+
+  //       // Cleanup the watchPosition when the component unmounts
+  //       return () => navigator.geolocation.clearWatch(watchId);
+  //     } else {
+  //       console.error("Geolocation is not supported by this browser.");
+  //     }
+  //   };
+
+  //   getLocation();
+  // }, []);
+
   return (
     <div
       style={{
@@ -84,14 +107,13 @@ const Home = () => {
         <ReactMapGL
           style={{ marginTop: "40px", width: "300px" }}
           {...viewport}
-          onViewportChange={(e) => setViewport(e)}
+          onMove={(e) => setViewport(e.viewport)}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
           attributionControl={false}
         >
           <GeolocateControl
             trackUserLocation={true}
-            auto={true}
             onGeolocate={(position) => updateCurrentLocation(position)}
           />
           <NavigationControl position="bottom-right" />

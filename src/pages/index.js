@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMapGL, {
   FullscreenControl,
   GeolocateControl,
@@ -23,21 +23,43 @@ const Home = () => {
     longitude: 26.427082983048223,
     latitude: 55.60809820197926,
   });
+  const [distance, setDistance] = useState(0);
+
+  const updateCurrentLocation = (position) => {
+    setCurrentLocation({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
+  };
+
+  useEffect(() => {
+    // Calculate distance whenever currentLocation changes
+    const newDistance = calculateDistance(
+      currentLocation.latitude,
+      currentLocation.longitude,
+      markerPosition.latitude,
+      markerPosition.longitude
+    );
+
+    // Update the distance state
+    setDistance(newDistance);
+  }, [currentLocation, markerPosition]);
 
   useEffect(() => {
     const getLocation = () => {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setCurrentLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-          },
+        const options = { enableHighAccuracy: true };
+
+        const watchId = navigator.geolocation.watchPosition(
+          updateCurrentLocation,
           (error) => {
             console.error("Error getting location:", error.message);
-          }
+          },
+          options
         );
+
+        // Cleanup the watchPosition when the component unmounts
+        return () => navigator.geolocation.clearWatch(watchId);
       } else {
         console.error("Geolocation is not supported by this browser.");
       }
@@ -45,12 +67,6 @@ const Home = () => {
 
     getLocation();
   }, []);
-  const distance = calculateDistance(
-    currentLocation.latitude,
-    currentLocation.longitude,
-    markerPosition.latitude,
-    markerPosition.longitude
-  );
 
   return (
     <div

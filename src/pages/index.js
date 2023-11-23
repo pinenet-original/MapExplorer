@@ -64,13 +64,6 @@ const Home = () => {
         border: "solid 1px red",
       }}
     >
-      <h1>Map Explorer</h1>
-      <MapInfo
-        latitude={currentLocation.latitude}
-        longitude={currentLocation.longitude}
-        distance={distance}
-      />
-
       <div
         style={{
           height: "40vh",
@@ -96,6 +89,12 @@ const Home = () => {
           />
         </ReactMapGL>
       </div>
+      <h1>Map Explorer</h1>
+      <MapInfo
+        latitude={currentLocation.latitude}
+        longitude={currentLocation.longitude}
+        distance={distance}
+      />
     </div>
   );
 };

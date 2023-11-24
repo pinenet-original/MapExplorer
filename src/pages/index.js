@@ -121,6 +121,7 @@ const Home = () => {
           <GeolocateControl
             showAccuracyCircle={false}
             positionOptions={{ enableHighAccuracy: true }}
+            trackUserLocation={true}
             ref={geoControlRef}
             onGeolocate={handleGeolocate}
             onViewportChange={(e) => setViewport(e.viewport)}

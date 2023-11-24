@@ -16,7 +16,7 @@ import { lineStyle } from "@/utils/geoJsonData";
 const Home = () => {
   const geoControlRef = useRef();
 
-  //map's starting point
+  // map's starting point
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
@@ -39,14 +39,33 @@ const Home = () => {
   const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
   const [end, setEnd] = useState([26.44709, 55.59473]);
   const [coords, setCoords] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [showDirection, setShowDirection] = useState(false);
 
   const getRoute = async () => {
-    const responce = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/walking/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
-    );
-    const data = await responce.json();
-    const coords = data.routes[0].geometry.coordinates;
-    setCoords(coords);
+    try {
+      setIsFetching(true);
+
+      const response = await fetch(
+        `https://api.mapbox.com/directions/v5/mapbox/walking/${start.join(
+          ","
+        )};${end.join(",")}?steps=true&geometries=geojson&access_token=${
+          process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+        }`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch route data");
+      }
+
+      const data = await response.json();
+      const coords = data.routes[0].geometry.coordinates;
+      setCoords(coords);
+    } catch (error) {
+      console.error("Error fetching route data:", error);
+    } finally {
+      setIsFetching(false);
+    }
   };
   const handleClick = (e) => {
     const newEnd = e.lngLat;
@@ -68,8 +87,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getRoute();
-  }, [start, end]);
+    if (showDirection) {
+      getRoute();
+    }
+  }, [showDirection, start, end]);
 
   const updateCurrentLocation = (position) => {
     setCurrentLocation({
@@ -84,6 +105,7 @@ const Home = () => {
 
   const handleGeolocate = (position) => {
     updateCurrentLocation(position);
+    setStart([position.coords.longitude, position.coords.latitude]);
     handleViewportChange((prevViewport) => ({
       ...prevViewport,
       longitude: position.coords.longitude,
@@ -154,6 +176,16 @@ const Home = () => {
           longitude={currentLocation.longitude}
           distance={distance}
         />
+        <button
+          style={{
+            border: "solid 1px blue",
+            borderRadius: "15px",
+            width: "150px",
+          }}
+          onClick={() => setShowDirection(!showDirection)}
+        >
+          {showDirection ? "Hide Direction" : "Show Direction"}
+        </button>
       </div>
       <div
         style={{
@@ -191,9 +223,11 @@ const Home = () => {
             latitude={markerPosition.latitude}
           /> */}
           //Direction's Source
-          <Source id="routeSource" type="geojson" data={geojson}>
-            <Layer {...lineStyle} />
-          </Source>
+          {showDirection && !isFetching && (
+            <Source id="routeSource" type="geojson" data={geojson}>
+              <Layer {...lineStyle} />
+            </Source>
+          )}
           <Marker longitude={start[0]} latitude={start[1]} />
           <Marker longitude={end[0]} latitude={end[1]} />
         </ReactMapGL>

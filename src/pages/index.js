@@ -53,7 +53,7 @@ const Home = () => {
   useEffect(() => {
     const geolocateControl = new mapboxgl.GeolocateControl({
       positionOptions: {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false,
       },
       trackUserLocation: true,
       showUserHeading: true,
@@ -123,12 +123,11 @@ const Home = () => {
           onMove={(e) => setViewport(e.viewport)}
         >
           <GeolocateControl
-            trackUserLocation
-            showUserLocation
             showAccuracyCircle={false}
             positionOptions={{ enableHighAccuracy: true }}
             ref={geoControlRef}
             onGeolocate={handleGeolocate}
+            onViewportChange={(e) => setViewport(e.viewport)}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />

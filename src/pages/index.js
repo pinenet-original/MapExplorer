@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactMapGL, {
   FullscreenControl,
   GeolocateControl,
-  Marker,
   NavigationControl,
+  Marker,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapInfo from "@/components/MapInfo";
 import { calculateDistance } from "@/utils/helpers";
+import mapboxgl from "mapbox-gl";
 
 const Home = () => {
   const [viewport, setViewport] = useState({
@@ -19,12 +20,15 @@ const Home = () => {
     longitude: 0,
     latitude: 0,
   });
+
   const [markerPosition, setMarkerPosition] = useState({
     longitude: 26.4318921,
     latitude: 55.6040879,
   });
   const [distance, setDistance] = useState(0);
   const [approachAlertShown, setApproachAlertShown] = useState(false);
+
+  const geoControlRef = useRef(); // Create a ref for the GeolocateControl
 
   const updateCurrentLocation = (position) => {
     setCurrentLocation({
@@ -39,15 +43,32 @@ const Home = () => {
 
   const handleGeolocate = (position) => {
     updateCurrentLocation(position);
-    handleViewportChange({
-      ...viewport,
+    handleViewportChange((prevViewport) => ({
+      ...prevViewport,
       longitude: position.coords.longitude,
       latitude: position.coords.latitude,
-    });
+    }));
   };
+  // Initialize and trigger geolocation control when component mounts
+  useEffect(() => {
+    const geolocateControl = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true,
+      showUserHeading: true,
+    });
+
+    geolocateControl.on("geolocate", (event) => {
+      const { longitude, latitude } = event.coords;
+
+      setCurrentLocation({ longitude, latitude });
+
+      newMap.setCenter([longitude, latitude]);
+    });
+  }, []);
 
   useEffect(() => {
-    // Calculate distance whenever currentLocation changes
     const newDistance = calculateDistance(
       currentLocation.latitude,
       currentLocation.longitude,
@@ -59,13 +80,11 @@ const Home = () => {
       setApproachAlertShown(true);
       alert("Marker approached!");
     } else if (newDistance >= threshold && approachAlertShown) {
-      // Reset the flag when the distance is above the threshold again
       setApproachAlertShown(false);
     }
 
-    // Update the distance state
     setDistance(newDistance);
-  }, [currentLocation, markerPosition]);
+  }, [currentLocation, markerPosition, approachAlertShown]);
 
   return (
     <div
@@ -104,7 +123,11 @@ const Home = () => {
           onMove={(e) => setViewport(e.viewport)}
         >
           <GeolocateControl
-            trackUserLocation={true}
+            trackUserLocation
+            showUserLocation
+            showAccuracyCircle={false}
+            positionOptions={{ enableHighAccuracy: true }}
+            ref={geoControlRef}
             onGeolocate={handleGeolocate}
           />
           <NavigationControl position="bottom-right" />

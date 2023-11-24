@@ -53,7 +53,7 @@ const Home = () => {
   useEffect(() => {
     const geolocateControl = new mapboxgl.GeolocateControl({
       positionOptions: {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
       },
       trackUserLocation: true,
       showUserHeading: true,

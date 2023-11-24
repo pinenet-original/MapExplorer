@@ -4,11 +4,14 @@ import ReactMapGL, {
   GeolocateControl,
   NavigationControl,
   Marker,
+  Source,
+  Layer,
 } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapInfo from "@/components/MapInfo";
 import { calculateDistance } from "@/utils/helpers";
+import { lineStyle } from "@/utils/geoJsonData";
 
 const Home = () => {
   const geoControlRef = useRef();
@@ -32,6 +35,41 @@ const Home = () => {
     longitude: 26.4318921,
     latitude: 55.6040879,
   });
+
+  const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
+  const [end, setEnd] = useState([26.44709, 55.59473]);
+  const [coords, setCoords] = useState([]);
+
+  const getRoute = async () => {
+    const responce = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/walking/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+    );
+    const data = await responce.json();
+    const coords = data.routes[0].geometry.coordinates;
+    setCoords(coords);
+  };
+  const handleClick = (e) => {
+    const newEnd = e.lngLat;
+    const endPoint = Object.keys(newEnd).map((item, i) => newEnd[item]);
+    setEnd(endPoint);
+  };
+
+  const geojson = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [...coords],
+        },
+      },
+    ],
+  };
+
+  useEffect(() => {
+    getRoute();
+  }, [start, end]);
 
   const updateCurrentLocation = (position) => {
     setCurrentLocation({
@@ -134,6 +172,7 @@ const Home = () => {
           attributionControl={false}
           onViewportChange={handleViewportChange}
           onMove={(e) => setViewport(e.viewport)}
+          onClick={handleClick}
         >
           //MapsBox Map Controls
           <GeolocateControl
@@ -143,14 +182,20 @@ const Home = () => {
             ref={geoControlRef}
             onGeolocate={handleGeolocate}
             onViewportChange={(e) => setViewport(e.viewport)}
-            fitBoundsOptions={{ maxZoom: 20 }}
+            fitBoundsOptions={{ zoom: 17 }}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
-          <Marker
+          {/* <Marker
             longitude={markerPosition.longitude}
             latitude={markerPosition.latitude}
-          />
+          /> */}
+          //Direction's Source
+          <Source id="routeSource" type="geojson" data={geojson}>
+            <Layer {...lineStyle} />
+          </Source>
+          <Marker longitude={start[0]} latitude={start[1]} />
+          <Marker longitude={end[0]} latitude={end[1]} />
         </ReactMapGL>
       </div>
     </div>

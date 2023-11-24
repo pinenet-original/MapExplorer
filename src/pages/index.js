@@ -52,10 +52,6 @@ const Home = () => {
   // Initialize and trigger geolocation control when component mounts
   useEffect(() => {
     const geolocateControl = new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      trackUserLocation: true,
       showUserHeading: true,
     });
 

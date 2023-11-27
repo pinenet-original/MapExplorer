@@ -24,9 +24,9 @@ const Home = () => {
   });
 
   // Route details
+  const [coords, setCoords] = useState([]);
   const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
   const [end, setEnd] = useState([26.44709, 55.59473]);
-  const [coords, setCoords] = useState([]);
   const [steps, setSteps] = useState([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [totalDistance, setTotalDistance] = useState(0);
@@ -182,6 +182,7 @@ const Home = () => {
             <MapInfo
               totalDistance={totalDistance.toFixed(0)}
               finalDestination={finalDestination}
+              coords={coords}
             />
             {steps.length > 0 && (
               <Instruction instruction={steps[currentStepIndex]} />

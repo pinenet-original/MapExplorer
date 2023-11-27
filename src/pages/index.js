@@ -11,6 +11,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
 import { lineStyle } from "@/utils/geoJsonData";
 import Instruction from "@/components/Instruction";
+import MapInfo from "@/components/MapInfo";
 
 const Home = () => {
   const geoControlRef = useRef();
@@ -32,6 +33,7 @@ const Home = () => {
   const [distanceToNextStep, setDistanceToNextStep] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [showDirection, setShowDirection] = useState(false);
+  const [finalDestination, setFinalDestination] = useState("");
 
   // Fetch route details
   const getRoute = async () => {
@@ -57,6 +59,7 @@ const Home = () => {
       setSteps(route.legs[0].steps.map((step) => step.maneuver.instruction));
       setTotalDistance(route.distance);
       setDistanceToNextStep(route.legs[0].steps[0].distance);
+      setFinalDestination(route.legs[0].summary);
     } catch (error) {
       console.error("Error fetching route data:", error);
     } finally {
@@ -124,6 +127,7 @@ const Home = () => {
   useEffect(() => {
     const onGeolocate = (e) => {
       const userLocation = [e.coords.longitude, e.coords.latitude];
+
       const currentStep = steps[currentStepIndex];
 
       const distanceToNextStep = calculateDistance(
@@ -157,14 +161,10 @@ const Home = () => {
       }}
     >
       <div>
-        <h1 style={{ color: "red" }}>Map Explorer</h1>
+        <h1 className="text-6xl mb-20 text-[#50d71e] ">Map Explorer</h1>
 
         <button
-          style={{
-            border: "solid 1px blue",
-            borderRadius: "15px",
-            width: "150px",
-          }}
+          className="border border-blue-500 rounded-lg py-2 px-4 w-36"
           onClick={() => setShowDirection(!showDirection)}
         >
           {showDirection ? "Hide Direction" : "Show Direction"}
@@ -172,7 +172,11 @@ const Home = () => {
 
         {showDirection && (
           <div>
-            <div>Total Distance: {totalDistance.toFixed(0)} meters</div>
+            {/* <div>Total Distance: {totalDistance.toFixed(0)} meters</div> */}
+            <MapInfo
+              totalDistance={totalDistance.toFixed(0)}
+              finalDestination={finalDestination}
+            />
             {steps.length > 0 && (
               <Instruction instruction={steps[currentStepIndex]} />
             )}
@@ -191,7 +195,12 @@ const Home = () => {
         }}
       >
         <ReactMapGL
-          style={{ marginTop: "40px", width: "400px" }}
+          style={{
+            marginTop: "40px",
+            width: "400px",
+            borderRadius: "15px",
+            boxShadow: "10px 10px 5px 0px rgba(0,0,0,0.75)",
+          }}
           {...viewport}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"

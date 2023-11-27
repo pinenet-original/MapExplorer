@@ -125,7 +125,7 @@ const Home = () => {
       getRoute();
     }
     GeolocateControl.current?.trigger();
-  }, [showDirection, end, geoControlRef]);
+  }, [showDirection, end, geoControlRef, steps, distance]);
 
   // const updateCurrentLocation = (position) => {
   //   setCurrentLocation({

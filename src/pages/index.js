@@ -7,9 +7,7 @@ import ReactMapGL, {
   Source,
   Layer,
 } from "react-map-gl";
-import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import MapInfo from "@/components/MapInfo";
 import { calculateDistance } from "@/utils/helpers";
 import { lineStyle } from "@/utils/geoJsonData";
 import Instruction from "@/components/Instruction";
@@ -24,24 +22,13 @@ const Home = () => {
     zoom: 15,
   });
 
-  const [currentLocation, setCurrentLocation] = useState({
-    longitude: "",
-    latitude: "",
-  });
-
-  // const [distance, setDistance] = useState(0);
-  const [approachAlertShown, setApproachAlertShown] = useState(false);
-
-  const [markerPosition, setMarkerPosition] = useState({
-    longitude: 26.4318921,
-    latitude: 55.6040879,
-  });
-
   const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
   const [end, setEnd] = useState([26.44709, 55.59473]);
   const [coords, setCoords] = useState([]);
   const [steps, setSteps] = useState([]);
-  const [distance, setDistance] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [totallDistance, setTotallDistance] = useState(0);
+  const [distanceToNextStep, setDistanceToNextStep] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [showDirection, setShowDirection] = useState(false);
 
@@ -63,12 +50,16 @@ const Home = () => {
 
       const data = await response.json();
       const coords = data.routes[0].geometry.coordinates;
-      const steps = data.routes[0].legs[0].steps[0].maneuver.instruction;
-      const distance = data.routes[0].legs[0].steps[0].distance;
+      const steps = data.routes[0].legs[0].steps.map(
+        (step) => step.maneuver.instruction
+      );
+      const totallDistance = data.routes[0].distance;
+      const distanceToNextStep = data.routes[0].legs[0].steps[0].distance;
+
       setCoords(coords);
       setSteps(steps);
-      setDistance(distance);
-      console.log(distance);
+      setTotallDistance(totallDistance);
+      setDistanceToNextStep(distanceToNextStep);
     } catch (error) {
       console.error("Error fetching route data:", error);
     } finally {
@@ -116,10 +107,10 @@ const Home = () => {
 
   const handleClick = (e) => {
     const newEnd = e.lngLat;
-    const endPoint = Object.keys(newEnd).map((item, i) => newEnd[item]);
+    const endPoint = Object.keys(newEnd).map((item) => newEnd[item]);
     setEnd(endPoint);
+    setCurrentStepIndex(0);
   };
-
   useEffect(() => {
     if (showDirection) {
       getRoute();
@@ -127,72 +118,29 @@ const Home = () => {
     GeolocateControl.current?.trigger();
   }, [showDirection, end, geoControlRef]);
 
-  // const updateCurrentLocation = (position) => {
-  //   setCurrentLocation({
-  //     latitude: position.coords.latitude,
-  //     longitude: position.coords.longitude,
-  //   });
-  // };
+  useEffect(() => {
+    const onGeolocate = (e) => {
+      const userLocation = [e.coords.longitude, e.coords.latitude];
+      const currentStep = steps[currentStepIndex];
+      console.log(userLocation);
 
-  // const handleViewportChange = (newViewport) => {
-  //   setViewport(newViewport);
-  // };
+      const distanceToNextStep = calculateDistance(
+        userLocation,
+        currentStep.location.coordinates
+      );
 
-  // const handleGeolocate = (position) => {
-  //   updateCurrentLocation(position);
-  //   setStart([position.coords.longitude, position.coords.latitude]);
-  //   handleViewportChange((prevViewport) => ({
-  //     ...prevViewport,
-  //     longitude: position.coords.longitude,
-  //     latitude: position.coords.latitude,
-  //   }));
-  // };
+      if (distanceToNextStep < 0.0001) {
+        setCurrentStepIndex((prevIndex) =>
+          Math.min(prevIndex + 1, steps.length - 1)
+        );
+      }
+    };
+    GeolocateControl.current?.on("geolocate", onGeolocate);
 
-  // useEffect(() => {
-  //   const setupGeolocateControl = () => {
-  //     const geolocateControl = new mapboxgl.GeolocateControl({
-  //       showUserHeading: true,
-  //     });
-
-  //     geolocateControl.on("geolocate", (event) => {
-  //       const { longitude, latitude } = event.coords;
-  //       setCurrentLocation({ longitude, latitude });
-  //       setViewport((prevViewport) => ({
-  //         ...prevViewport,
-  //         longitude,
-  //         latitude,
-  //       }));
-  //     });
-
-  //     return geolocateControl;
-  //   };
-
-  //   const geolocateControl = setupGeolocateControl();
-
-  //   geoControlRef.current = geolocateControl;
-  // }, []);
-
-  // useEffect(() => {
-  //   const newDistance = calculateDistance(
-  //     currentLocation.latitude,
-  //     currentLocation.longitude,
-  //     markerPosition.latitude,
-  //     markerPosition.longitude
-  //   );
-
-  //   const checkApproachAlert = () => {
-  //     const threshold = 10;
-  //     if (newDistance < threshold && !approachAlertShown) {
-  //       setApproachAlertShown(true);
-  //       alert("Marker approached!");
-  //     } else if (newDistance >= threshold && approachAlertShown) {
-  //       setApproachAlertShown(false);
-  //     }
-  //   };
-
-  //   checkApproachAlert();
-  //   setDistance(newDistance);
-  // }, [currentLocation, markerPosition, approachAlertShown]);
+    return () => {
+      GeolocateControl.current?.off("geolocate", onGeolocate);
+    };
+  }, [currentStepIndex, steps]);
 
   return (
     <div
@@ -218,10 +166,13 @@ const Home = () => {
           {showDirection ? "Hide Direction" : "Show Direction"}
         </button>
         {showDirection && (
-          <article>
-            <div>{steps}</div>
-            <div>{distance}</div>
-          </article>
+          <div>
+            <div>Totall Distance: {totallDistance.toFixed(0)} meters</div>
+            {steps.length > 0 && (
+              <Instruction instruction={steps[currentStepIndex]} />
+            )}
+            <div>{distanceToNextStep}</div>
+          </div>
         )}
       </div>
       <div
@@ -239,7 +190,6 @@ const Home = () => {
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
           attributionControl={false}
-          // onViewportChange={handleViewportChange}
           onMove={(e) => setViewport(e.viewport)}
           onClick={handleClick}
         >
@@ -249,19 +199,13 @@ const Home = () => {
             positionOptions={{ enableHighAccuracy: true }}
             trackUserLocation={true}
             ref={geoControlRef}
-            // onGeolocate={handleGeolocate}
             onGeolocate={(e) =>
               setStart([e.coords.longitude, e.coords.latitude])
             }
-            // onViewportChange={(e) => setViewport(e.viewport)}
-            fitBoundsOptions={{ zoom: 15 }}
+            fitBoundsOptions={{ zoom: 17, pitch: 70 }}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
-          {/* <Marker
-            longitude={markerPosition.longitude}
-            latitude={markerPosition.latitude}
-          /> */}
           //Direction's Source
           {showDirection && !isFetching && (
             <>

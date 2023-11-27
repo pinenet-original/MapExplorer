@@ -16,7 +16,7 @@ import MapInfo from "@/components/MapInfo";
 const Home = () => {
   const geoControlRef = useRef();
 
-  // Map settings
+  // Initial Map settings
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
@@ -34,7 +34,7 @@ const Home = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [showDirection, setShowDirection] = useState(false);
   const [finalDestination, setFinalDestination] = useState("");
-
+  console.log(coords[0]);
   // Fetch route details
   const getRoute = async () => {
     try {
@@ -149,7 +149,7 @@ const Home = () => {
     return () => {
       GeolocateControl.current?.off("geolocate", onGeolocate);
     };
-  }, [currentStepIndex, steps]);
+  }, [currentStepIndex, steps, coords]);
   return (
     <div
       style={{

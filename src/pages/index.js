@@ -38,9 +38,10 @@ const Home = () => {
   const [showDirection, setShowDirection] = useState(false);
   const [finalDestination, setFinalDestination] = useState("");
   //Show Popup
-  const popup = useMemo(() => {
-    return new mapboxgl.Popup().setText("Kuzia !");
-  }, []);
+  const [marker, setMarker] = useState({
+    longitude: 26.4320152027785,
+    latitude: 55.60406394176823,
+  });
   const [showPopup, setShowPopup] = useState(true);
 
   // Fetch route details
@@ -251,19 +252,18 @@ const Home = () => {
           </Source>
           //Pop up window
           <Marker
-            longitude={26.4320152027785}
-            latitude={55.60406394176823}
+            longitude={marker.longitude}
+            latitude={marker.latitude}
             draggable={true}
-            popup={popup}
           />
-          {/* <Popup
-            longitude={26.4320152027785}
-            latitude={55.60406394176823}
+          <Popup
+            longitude={marker.longitude}
+            latitude={marker.latitude}
             anchor="bottom"
             onClose={() => setShowPopup(false)}
           >
             You have reached the Marker
-          </Popup> */}
+          </Popup>
         </ReactMapGL>
       </div>
     </div>

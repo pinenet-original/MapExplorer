@@ -67,13 +67,8 @@ const Home = () => {
       setIsFetching(false);
     }
   };
-  const handleClick = (e) => {
-    const newEnd = e.lngLat;
-    const endPoint = Object.keys(newEnd).map((item, i) => newEnd[item]);
-    setEnd(endPoint);
-  };
-
-  const geojson = {
+  //Start Point
+  const startPoint = {
     type: "FeatureCollection",
     features: [
       {
@@ -85,12 +80,43 @@ const Home = () => {
       },
     ],
   };
+  //End Point Decoration
+  const endPoint = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "feature",
+        geometry: {
+          type: "Point",
+          coordinates: [...end],
+        },
+      },
+    ],
+  };
+  const layerEndpoint = {
+    id: "end",
+    type: "circle",
+    source: {
+      type: "geojson",
+      data: end,
+    },
+    paint: {
+      "circle-radius": 10,
+      "circle-color": "#f70776",
+    },
+  };
+
+  const handleClick = (e) => {
+    const newEnd = e.lngLat;
+    const endPoint = Object.keys(newEnd).map((item, i) => newEnd[item]);
+    setEnd(endPoint);
+  };
 
   useEffect(() => {
     if (showDirection) {
       getRoute();
     }
-  }, [showDirection, start, end]);
+  }, [showDirection, start, end, geoControlRef]);
 
   const updateCurrentLocation = (position) => {
     setCurrentLocation({
@@ -103,39 +129,39 @@ const Home = () => {
     setViewport(newViewport);
   };
 
-  const handleGeolocate = (position) => {
-    updateCurrentLocation(position);
-    setStart([position.coords.longitude, position.coords.latitude]);
-    handleViewportChange((prevViewport) => ({
-      ...prevViewport,
-      longitude: position.coords.longitude,
-      latitude: position.coords.latitude,
-    }));
-  };
+  // const handleGeolocate = (position) => {
+  //   updateCurrentLocation(position);
+  //   setStart([position.coords.longitude, position.coords.latitude]);
+  //   handleViewportChange((prevViewport) => ({
+  //     ...prevViewport,
+  //     longitude: position.coords.longitude,
+  //     latitude: position.coords.latitude,
+  //   }));
+  // };
 
-  useEffect(() => {
-    const setupGeolocateControl = () => {
-      const geolocateControl = new mapboxgl.GeolocateControl({
-        showUserHeading: true,
-      });
+  // useEffect(() => {
+  //   const setupGeolocateControl = () => {
+  //     const geolocateControl = new mapboxgl.GeolocateControl({
+  //       showUserHeading: true,
+  //     });
 
-      geolocateControl.on("geolocate", (event) => {
-        const { longitude, latitude } = event.coords;
-        setCurrentLocation({ longitude, latitude });
-        setViewport((prevViewport) => ({
-          ...prevViewport,
-          longitude,
-          latitude,
-        }));
-      });
+  //     geolocateControl.on("geolocate", (event) => {
+  //       const { longitude, latitude } = event.coords;
+  //       setCurrentLocation({ longitude, latitude });
+  //       setViewport((prevViewport) => ({
+  //         ...prevViewport,
+  //         longitude,
+  //         latitude,
+  //       }));
+  //     });
 
-      return geolocateControl;
-    };
+  //     return geolocateControl;
+  //   };
 
-    const geolocateControl = setupGeolocateControl();
+  //   const geolocateControl = setupGeolocateControl();
 
-    geoControlRef.current = geolocateControl;
-  }, []);
+  //   geoControlRef.current = geolocateControl;
+  // }, []);
 
   useEffect(() => {
     const newDistance = calculateDistance(
@@ -212,9 +238,12 @@ const Home = () => {
             positionOptions={{ enableHighAccuracy: true }}
             trackUserLocation={true}
             ref={geoControlRef}
-            onGeolocate={handleGeolocate}
+            // onGeolocate={handleGeolocate}
+            onGeolocate={(e) =>
+              setStart([e.coords.longitude, e.coords.latitude])
+            }
             onViewportChange={(e) => setViewport(e.viewport)}
-            fitBoundsOptions={{ zoom: 17 }}
+            fitBoundsOptions={{ zoom: 15 }}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
@@ -224,12 +253,16 @@ const Home = () => {
           /> */}
           //Direction's Source
           {showDirection && !isFetching && (
-            <Source id="routeSource" type="geojson" data={geojson}>
-              <Layer {...lineStyle} />
-            </Source>
+            <>
+              <Source id="routeSource" type="geojson" data={startPoint}>
+                <Layer {...lineStyle} />
+              </Source>
+            </>
           )}
+          <Source id="endSource" type="geojson" data={endPoint}>
+            <Layer {...layerEndpoint} />
+          </Source>
           <Marker longitude={start[0]} latitude={start[1]} />
-          <Marker longitude={end[0]} latitude={end[1]} />
         </ReactMapGL>
       </div>
     </div>

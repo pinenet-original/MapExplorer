@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import ReactMapGL, {
   FullscreenControl,
   GeolocateControl,
@@ -6,7 +6,9 @@ import ReactMapGL, {
   Marker,
   Source,
   Layer,
+  Popup,
 } from "react-map-gl";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
 import { lineStyle } from "@/utils/geoJsonData";
@@ -27,6 +29,7 @@ const Home = () => {
   const [coords, setCoords] = useState([]);
   const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
   const [end, setEnd] = useState([26.44709, 55.59473]);
+  console.log(end);
   const [steps, setSteps] = useState([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [totalDistance, setTotalDistance] = useState(0);
@@ -34,6 +37,11 @@ const Home = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [showDirection, setShowDirection] = useState(false);
   const [finalDestination, setFinalDestination] = useState("");
+  //Show Popup
+  const popup = useMemo(() => {
+    return new mapboxgl.Popup().setText("Kuzia !");
+  }, []);
+  const [showPopup, setShowPopup] = useState(true);
 
   // Fetch route details
   const getRoute = async () => {
@@ -131,6 +139,10 @@ const Home = () => {
   useEffect(() => {
     const onGeolocate = (e) => {
       const userLocation = [e.coords.longitude, e.coords.latitude];
+      const { longitude, latitude } = e.coords;
+
+      // Update start coordinates with user's current location
+      setStart(userLocation);
 
       // Use the latest steps state
       const currentStep = steps[currentStepIndex];
@@ -142,7 +154,8 @@ const Home = () => {
 
       setDistanceToNextStep(distanceToNextStep);
 
-      if (distanceToNextStep < 0.0001) {
+      // Adjust the threshold for step completion to 10 meters
+      if (distanceToNextStep < 10) {
         setCurrentStepIndex((prevIndex) =>
           Math.min(prevIndex + 1, steps.length - 1)
         );
@@ -154,7 +167,7 @@ const Home = () => {
     return () => {
       GeolocateControl.current?.off("geolocate", onGeolocate);
     };
-  }, [currentStepIndex, steps, coords]);
+  }, [currentStepIndex, steps]);
 
   return (
     <div
@@ -178,11 +191,9 @@ const Home = () => {
 
         {showDirection && (
           <div>
-            {/* <div>Total Distance: {totalDistance.toFixed(0)} meters</div> */}
             <MapInfo
               totalDistance={totalDistance.toFixed(0)}
               finalDestination={finalDestination}
-              coords={coords}
             />
             {steps.length > 0 && (
               <Instruction instruction={steps[currentStepIndex]} />
@@ -228,7 +239,6 @@ const Home = () => {
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
-
           {showDirection && !isFetching && (
             <>
               <Source id="routeSource" type="geojson" data={startPoint}>
@@ -236,10 +246,24 @@ const Home = () => {
               </Source>
             </>
           )}
-
           <Source id="endSource" type="geojson" data={endPoint}>
             <Layer {...layerEndpoint} />
           </Source>
+          //Pop up window
+          <Marker
+            longitude={26.4320152027785}
+            latitude={55.60406394176823}
+            draggable={true}
+            popup={popup}
+          />
+          {/* <Popup
+            longitude={26.4320152027785}
+            latitude={55.60406394176823}
+            anchor="bottom"
+            onClose={() => setShowPopup(false)}
+          >
+            You have reached the Marker
+          </Popup> */}
         </ReactMapGL>
       </div>
     </div>

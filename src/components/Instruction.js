@@ -1,10 +1,9 @@
 import React from "react";
 
-const Instruction = ({ step, no_ }) => {
+const Instruction = ({ instruction }) => {
   return (
-    <div className="flex justfy-start items-center gap-5">
-      {no_}
-      {step}
+    <div style={{ margin: "10px 0", fontSize: "16px" }}>
+      <strong>Step:</strong> {instruction}
     </div>
   );
 };

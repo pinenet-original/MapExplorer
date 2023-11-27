@@ -34,7 +34,7 @@ const Home = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [showDirection, setShowDirection] = useState(false);
   const [finalDestination, setFinalDestination] = useState("");
-  console.log(coords[0]);
+
   // Fetch route details
   const getRoute = async () => {
     try {
@@ -117,10 +117,14 @@ const Home = () => {
 
   // Effect to fetch route and trigger geolocation
   useEffect(() => {
-    if (showDirection) {
-      getRoute();
-    }
-    GeolocateControl.current?.trigger();
+    const fetchData = async () => {
+      if (showDirection) {
+        await getRoute();
+        GeolocateControl.current?.trigger();
+      }
+    };
+
+    fetchData();
   }, [showDirection, end, geoControlRef]);
 
   // Effect to update step index based on geolocation
@@ -128,6 +132,7 @@ const Home = () => {
     const onGeolocate = (e) => {
       const userLocation = [e.coords.longitude, e.coords.latitude];
 
+      // Use the latest steps state
       const currentStep = steps[currentStepIndex];
 
       const distanceToNextStep = calculateDistance(
@@ -150,6 +155,7 @@ const Home = () => {
       GeolocateControl.current?.off("geolocate", onGeolocate);
     };
   }, [currentStepIndex, steps, coords]);
+
   return (
     <div
       style={{

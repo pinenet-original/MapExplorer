@@ -217,7 +217,7 @@ const Home = () => {
             onGeolocate={(e) =>
               setStart([e.coords.longitude, e.coords.latitude])
             }
-            fitBoundsOptions={{ zoom: 24, pitch: 70 }}
+            fitBoundsOptions={{ zoom: 20, pitch: 70 }}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />

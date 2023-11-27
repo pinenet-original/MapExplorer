@@ -198,6 +198,7 @@ const Home = () => {
             showAccuracyCircle={false}
             positionOptions={{ enableHighAccuracy: true }}
             trackUserLocation={true}
+            showUserHeading
             ref={geoControlRef}
             onGeolocate={(e) =>
               setStart([e.coords.longitude, e.coords.latitude])

@@ -4,6 +4,7 @@ import ReactMapGL, {
   GeolocateControl,
   NavigationControl,
   Marker,
+  Popup,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
@@ -24,7 +25,7 @@ const Home = () => {
   });
   const [distance, setDistance] = useState(null);
   console.log(distance);
-  const [approachAlertShown, setApproachAlertShown] = useState(false);
+  const [approachPopupShown, setApproachPopupShown] = useState(false);
 
   const marker = {
     markerName: "Marker 1",
@@ -81,23 +82,21 @@ const Home = () => {
         setDistance(distance);
 
         const threshold = 10;
-        if (distance < threshold && !approachAlertShown) {
-          setApproachAlertShown(true);
-          alert("Marker approached!");
-        } else if (distance >= threshold && approachAlertShown) {
+        if (distance < threshold && !approachPopupShown) {
+          setApproachPopupShown(true);
+        } else if (distance >= threshold && approachPopupShown) {
           // Reset the flag when the distance is above the threshold again
-          setApproachAlertShown(false);
+          setApproachPopupShown(false);
         }
       }
     };
 
-    // Call handleMove when the component mounts
     handleMove();
 
     return () => {
       // Cleanup logic if needed
     };
-  }, [currentLocation, approachAlertShown, marker]);
+  }, [currentLocation, approachPopupShown, marker]);
 
   return (
     <div
@@ -164,6 +163,16 @@ const Home = () => {
             draggable={true}
             color={marker.color}
           />
+          {approachPopupShown && (
+            <Popup
+              longitude={-100}
+              latitude={40}
+              anchor="bottom"
+              onClose={() => setApproachPopupShown(false)}
+            >
+              You are here
+            </Popup>
+          )}
         </ReactMapGL>
       </div>
     </div>

@@ -4,7 +4,6 @@ import ReactMapGL, {
   GeolocateControl,
   NavigationControl,
   Marker,
-  Popup,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
@@ -25,22 +24,13 @@ const Home = () => {
   });
   const [distance, setDistance] = useState(null);
 
-  const [markers, setMarkers] = useState([
-    {
-      markerName: "Marker 1",
-      longitude: 26.4320152027785,
-      latitude: 55.60406394176823,
-      reached: false,
-      color: "#42b883",
-    },
-    {
-      markerName: "Marker 2",
-      longitude: 26.4320152027895,
-      latitude: 55.60409394196893,
-      reached: false,
-      color: "#f70776",
-    },
-  ]);
+  const marker = {
+    markerName: "Marker 1",
+    longitude: 26.4320152027785,
+    latitude: 55.60406394176823,
+    reached: false,
+    color: "#42b883",
+  };
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -71,7 +61,7 @@ const Home = () => {
     }
   }, []);
 
-  const calculateAndShowDistance = (marker) => {
+  const calculateAndShowDistance = () => {
     const distance = calculateDistance(
       currentLocation.latitude,
       currentLocation.longitude,
@@ -79,7 +69,7 @@ const Home = () => {
       marker.longitude
     );
 
-    setDistance(distance); // No need for toFixed() here
+    setDistance(distance);
   };
 
   return (
@@ -134,19 +124,16 @@ const Home = () => {
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
 
-          {/* Markers */}
-          {markers.map((marker, index) => (
-            <Marker
-              key={index}
-              longitude={marker.longitude}
-              latitude={marker.latitude}
-              offsetTop={-20}
-              offsetLeft={-10}
-              draggable={true}
-              color={marker.color}
-              onDragEnd={(event) => calculateAndShowDistance(marker, event)}
-            />
-          ))}
+          {/* Marker */}
+          <Marker
+            longitude={marker.longitude}
+            latitude={marker.latitude}
+            offsetTop={-20}
+            offsetLeft={-10}
+            draggable={true}
+            color={marker.color}
+            onDragEnd={calculateAndShowDistance}
+          />
         </ReactMapGL>
       </div>
     </div>

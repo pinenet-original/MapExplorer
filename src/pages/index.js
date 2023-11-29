@@ -46,11 +46,11 @@ const Home = () => {
     },
   ]);
 
-  const handleGeolocate = () => {
-    if (geoControlRef.current) {
-      geoControlRef.current._onClickGeolocate();
-    }
-  };
+  // const handleGeolocate = () => {
+  //   if (geoControlRef.current) {
+  //     geoControlRef.current._onClickGeolocate();
+  //   }
+  // };
 
   // const onDragEnd = (marker, index, event) => {
   //   const { lngLat } = event;
@@ -75,30 +75,30 @@ const Home = () => {
   //   }
   // };
 
-  useEffect(() => {
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setCurrentLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
+  // useEffect(() => {
+  //   const getLocation = () => {
+  //     if (navigator.geolocation) {
+  //       navigator.geolocation.getCurrentPosition(
+  //         (position) => {
+  //           setCurrentLocation({
+  //             latitude: position.coords.latitude,
+  //             longitude: position.coords.longitude,
+  //           });
 
-            // If you want to update the map's center to the current location, uncomment the following line:
-            // setViewport({ ...viewport, center: [position.coords.longitude, position.coords.latitude] });
-          },
-          (error) => {
-            console.error("Error getting location:", error.message);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    };
+  //           // If you want to update the map's center to the current location, uncomment the following line:
+  //           // setViewport({ ...viewport, center: [position.coords.longitude, position.coords.latitude] });
+  //         },
+  //         (error) => {
+  //           console.error("Error getting location:", error.message);
+  //         }
+  //       );
+  //     } else {
+  //       console.error("Geolocation is not supported by this browser.");
+  //     }
+  //   };
 
-    getLocation();
-  }, []);
+  //   getLocation();
+  // }, []);
   return (
     <div
       style={{
@@ -144,7 +144,7 @@ const Home = () => {
             showUserHeading
             ref={geoControlRef}
             fitBoundsOptions={{ zoom: 20, pitch: 70 }}
-            onClick={handleGeolocate}
+            // onClick={handleGeolocate}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />

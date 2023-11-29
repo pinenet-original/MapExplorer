@@ -52,57 +52,29 @@ const Home = () => {
     }
   };
 
-  const onDragEnd = (marker, index, event) => {
-    const { lngLat } = event;
-    const distance = calculateDistance(
-      lngLat[0],
-      lngLat[1],
-      marker.longitude,
-      marker.latitude
-    );
-
-    if (distance < 10) {
-      setPopupInfo({
-        longitude: marker.longitude,
-        latitude: marker.latitude,
-      });
-
-      setMarkers((prevMarkers) =>
-        prevMarkers.map((prevMarker, i) =>
-          i === index ? { ...prevMarker, reached: true } : prevMarker
-        )
-      );
-    }
-  };
-
   useEffect(() => {
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setCurrentLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
+    if ("geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
+          setViewport((prevViewport) => ({
+            ...prevViewport,
+            longitude,
+            latitude,
+          }));
+          setCurrentLocation({ longitude, latitude });
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error);
+        }
+      );
 
-            // If you want to update the map's center to the current location, uncomment the following line:
-            setViewport({
-              ...viewport,
-              center: [position.coords.longitude, position.coords.latitude],
-            });
-          },
-          (error) => {
-            console.error("Error getting location:", error.message);
-          },
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    };
+      return () => {
+        navigator.geolocation.clearWatch(watchId);
+      };
+    }
+  }, []);
 
-    getLocation();
-  }, [viewport, currentLocation]);
   return (
     <div
       style={{
@@ -161,9 +133,8 @@ const Home = () => {
               offsetTop={-20}
               offsetLeft={-10}
               draggable={true}
-              color={marker.color}
-              onDragEnd={(event) => onDragEnd(marker, index, event)}
-            />
+              color={`${marker.color}`}
+            ></Marker>
           ))}
           {popupInfo && (
             <Popup
@@ -171,7 +142,9 @@ const Home = () => {
               latitude={popupInfo.latitude}
               onClose={() => setPopupInfo(null)}
             >
-              <div>Your position is here</div>
+              <div>
+                {popupInfo.latitude.toFixed(6)},{popupInfo.longitude.toFixed(6)}
+              </div>
             </Popup>
           )}
         </ReactMapGL>

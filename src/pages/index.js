@@ -23,6 +23,8 @@ const Home = () => {
     latitude: 0,
   });
   const [distance, setDistance] = useState(null);
+  console.log(distance);
+  const [approachAlertShown, setApproachAlertShown] = useState(false);
 
   const marker = {
     markerName: "Marker 1",
@@ -61,16 +63,41 @@ const Home = () => {
     }
   }, []);
 
-  const calculateAndShowDistance = () => {
-    const distance = calculateDistance(
-      currentLocation.latitude,
-      currentLocation.longitude,
-      marker.latitude,
-      marker.longitude
-    );
+  useEffect(() => {
+    const handleMove = () => {
+      // Check if both currentLocation and marker have valid coordinates
+      if (
+        currentLocation.latitude !== 0 &&
+        currentLocation.longitude !== 0 &&
+        marker.latitude &&
+        marker.longitude
+      ) {
+        const distance = calculateDistance(
+          currentLocation.latitude,
+          currentLocation.longitude,
+          marker.latitude,
+          marker.longitude
+        );
+        setDistance(distance);
 
-    setDistance(distance);
-  };
+        const threshold = 10;
+        if (distance < threshold && !approachAlertShown) {
+          setApproachAlertShown(true);
+          alert("Marker approached!");
+        } else if (distance >= threshold && approachAlertShown) {
+          // Reset the flag when the distance is above the threshold again
+          setApproachAlertShown(false);
+        }
+      }
+    };
+
+    // Call handleMove when the component mounts
+    handleMove();
+
+    return () => {
+      // Cleanup logic if needed
+    };
+  }, [currentLocation, approachAlertShown, marker]);
 
   return (
     <div
@@ -111,6 +138,10 @@ const Home = () => {
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
           attributionControl={false}
           onMove={(e) => setViewport(e.viewport)}
+          onViewportChange={(newViewport) => {
+            setViewport(newViewport);
+            handleMove(); // Call handleMove on map movement
+          }}
         >
           <GeolocateControl
             showAccuracyCircle={false}
@@ -132,7 +163,6 @@ const Home = () => {
             offsetLeft={-10}
             draggable={true}
             color={marker.color}
-            onDragEnd={calculateAndShowDistance}
           />
         </ReactMapGL>
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef } from "react";
 import ReactMapGL, {
   FullscreenControl,
   GeolocateControl,
@@ -11,9 +11,6 @@ import ReactMapGL, {
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
-import { lineStyle } from "@/utils/geoJsonData";
-import Instruction from "@/components/Instruction";
-import MapInfo from "@/components/MapInfo";
 
 const Home = () => {
   const geoControlRef = useRef();
@@ -25,150 +22,47 @@ const Home = () => {
     zoom: 15,
   });
 
-  // Route details
-  const [coords, setCoords] = useState([]);
-  const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
-  const [end, setEnd] = useState([26.44709, 55.59473]);
-  console.log(end);
-  const [steps, setSteps] = useState([]);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [totalDistance, setTotalDistance] = useState(0);
-  const [distanceToNextStep, setDistanceToNextStep] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const [showDirection, setShowDirection] = useState(false);
-  const [finalDestination, setFinalDestination] = useState("");
-  //Show Popup
+  const [popupInfo, setPopupInfo] = useState(null);
+
+  const [currentLocation, setCurrentLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+
   const [marker, setMarker] = useState({
     longitude: 26.4320152027785,
     latitude: 55.60406394176823,
   });
-  const [showPopup, setShowPopup] = useState(true);
 
-  // Fetch route details
-  const getRoute = async () => {
-    try {
-      setIsFetching(true);
-
-      const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/walking/${start.join(
-          ","
-        )};${end.join(",")}?steps=true&geometries=geojson&access_token=${
-          process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-        }`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch route data");
-      }
-
-      const data = await response.json();
-      const route = data.routes[0];
-
-      setCoords(route.geometry.coordinates);
-      setSteps(route.legs[0].steps.map((step) => step.maneuver.instruction));
-      setTotalDistance(route.distance);
-      setDistanceToNextStep(route.legs[0].steps[0].distance);
-      setFinalDestination(route.legs[0].summary);
-    } catch (error) {
-      console.error("Error fetching route data:", error);
-    } finally {
-      setIsFetching(false);
+  const handleGeolocate = () => {
+    if (geoControlRef.current) {
+      geoControlRef.current._onClickGeolocate();
     }
   };
 
-  // GeoJSON for Start and End points
-  const startPoint = {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        geometry: {
-          type: "LineString",
-          coordinates: [...coords],
-        },
-      },
-    ],
-  };
-
-  const endPoint = {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [...end],
-        },
-      },
-    ],
-  };
-
-  const layerEndpoint = {
-    id: "end",
-    type: "circle",
-    source: {
-      type: "geojson",
-      data: end,
-    },
-    paint: {
-      "circle-radius": 10,
-      "circle-color": "#f70776",
-    },
-  };
-
-  // Map click handler
-  const handleClick = (e) => {
-    const newEnd = e.lngLat;
-    const endPoint = Object.values(newEnd);
-    setEnd(endPoint);
-    setCurrentStepIndex(0);
-  };
-
-  // Effect to fetch route and trigger geolocation
   useEffect(() => {
-    const fetchData = async () => {
-      if (showDirection) {
-        await getRoute();
-        GeolocateControl.current?.trigger();
-      }
-    };
-
-    fetchData();
-  }, [showDirection, end, geoControlRef]);
-
-  // Effect to update step index based on geolocation
-  useEffect(() => {
-    const onGeolocate = (e) => {
-      const userLocation = [e.coords.longitude, e.coords.latitude];
-      const { longitude, latitude } = e.coords;
-
-      // Update start coordinates with user's current location
-      setStart(userLocation);
-
-      // Use the latest steps state
-      const currentStep = steps[currentStepIndex];
-
-      const distanceToNextStep = calculateDistance(
-        userLocation,
-        currentStep.location.coordinates
+    if ("geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
+          setViewport((prevViewport) => ({
+            ...prevViewport,
+            longitude,
+            latitude,
+          }));
+          setCurrentLocation({ longitude, latitude });
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error);
+        }
       );
 
-      setDistanceToNextStep(distanceToNextStep);
-
-      // Adjust the threshold for step completion to 10 meters
-      if (distanceToNextStep < 10) {
-        setCurrentStepIndex((prevIndex) =>
-          Math.min(prevIndex + 1, steps.length - 1)
-        );
-      }
-    };
-
-    GeolocateControl.current?.on("geolocate", onGeolocate);
-
-    return () => {
-      GeolocateControl.current?.off("geolocate", onGeolocate);
-    };
-  }, [currentStepIndex, steps]);
+      return () => {
+        // Clear watchPosition when the component unmounts
+        navigator.geolocation.clearWatch(watchId);
+      };
+    }
+  }, []);
 
   return (
     <div
@@ -182,26 +76,8 @@ const Home = () => {
     >
       <div>
         <h1 className="text-6xl mb-20 text-[#50d71e] ">Map Explorer</h1>
-
-        <button
-          className="border border-blue-500 rounded-lg py-2 px-4 w-36"
-          onClick={() => setShowDirection(!showDirection)}
-        >
-          {showDirection ? "Hide Direction" : "Show Direction"}
-        </button>
-
-        {showDirection && (
-          <div>
-            <MapInfo
-              totalDistance={totalDistance.toFixed(0)}
-              finalDestination={finalDestination}
-            />
-            {steps.length > 0 && (
-              <Instruction instruction={steps[currentStepIndex]} />
-            )}
-            <div>{distanceToNextStep}</div>
-          </div>
-        )}
+        Current Location: {currentLocation.latitude.toFixed(6)},{" "}
+        {currentLocation.longitude.toFixed(6)}
       </div>
 
       <div
@@ -225,7 +101,6 @@ const Home = () => {
           mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
           attributionControl={false}
           onMove={(e) => setViewport(e.viewport)}
-          onClick={handleClick}
         >
           <GeolocateControl
             showAccuracyCircle={false}
@@ -233,37 +108,17 @@ const Home = () => {
             trackUserLocation={true}
             showUserHeading
             ref={geoControlRef}
-            onGeolocate={(e) =>
-              setStart([e.coords.longitude, e.coords.latitude])
-            }
             fitBoundsOptions={{ zoom: 20, pitch: 70 }}
+            onClick={handleGeolocate}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
-          {showDirection && !isFetching && (
-            <>
-              <Source id="routeSource" type="geojson" data={startPoint}>
-                <Layer {...lineStyle} />
-              </Source>
-            </>
-          )}
-          <Source id="endSource" type="geojson" data={endPoint}>
-            <Layer {...layerEndpoint} />
-          </Source>
           //Pop up window
           <Marker
             longitude={marker.longitude}
             latitude={marker.latitude}
             draggable={true}
           />
-          <Popup
-            longitude={marker.longitude}
-            latitude={marker.latitude}
-            anchor="bottom"
-            onClose={() => setShowPopup(false)}
-          >
-            You have reached the Marker
-          </Popup>
         </ReactMapGL>
       </div>
     </div>

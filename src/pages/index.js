@@ -4,11 +4,8 @@ import ReactMapGL, {
   GeolocateControl,
   NavigationControl,
   Marker,
-  Source,
-  Layer,
   Popup,
 } from "react-map-gl";
-import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
 
@@ -21,8 +18,6 @@ const Home = () => {
     latitude: 55.60407906787367,
     zoom: 15,
   });
-
-  const [popupInfo, setPopupInfo] = useState(null);
 
   const [currentLocation, setCurrentLocation] = useState({
     longitude: 0,
@@ -45,6 +40,8 @@ const Home = () => {
       color: "#f70776",
     },
   ]);
+
+  const [popupInfo, setPopupInfo] = useState(null);
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -74,6 +71,21 @@ const Home = () => {
       };
     }
   }, []);
+
+  const calculateAndShowDistance = (marker) => {
+    const distance = calculateDistance(
+      currentLocation.longitude,
+      currentLocation.latitude,
+      marker.longitude,
+      marker.latitude
+    );
+
+    setPopupInfo({
+      longitude: marker.longitude,
+      latitude: marker.latitude,
+      distance: distance.toFixed(2),
+    });
+  };
 
   return (
     <div
@@ -124,7 +136,8 @@ const Home = () => {
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
-          //Pop up window
+
+          {/* Markers */}
           {markers.map((marker, index) => (
             <Marker
               key={index}
@@ -133,18 +146,19 @@ const Home = () => {
               offsetTop={-20}
               offsetLeft={-10}
               draggable={true}
-              color={`${marker.color}`}
-            ></Marker>
+              color={marker.color}
+              onMouseOver={() => calculateAndShowDistance(marker)}
+            />
           ))}
+
+          {/* Popup */}
           {popupInfo && (
             <Popup
               longitude={popupInfo.longitude}
               latitude={popupInfo.latitude}
               onClose={() => setPopupInfo(null)}
             >
-              <div>
-                {popupInfo.latitude.toFixed(6)},{popupInfo.longitude.toFixed(6)}
-              </div>
+              <div>Distance: {popupInfo.distance} km</div>
             </Popup>
           )}
         </ReactMapGL>

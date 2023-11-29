@@ -29,10 +29,22 @@ const Home = () => {
     latitude: 0,
   });
 
-  const [marker, setMarker] = useState({
-    longitude: 26.4320152027785,
-    latitude: 55.60406394176823,
-  });
+  const [markers, setMarkers] = useState([
+    {
+      markerName: "Marker 1",
+      longitude: 26.4320152027785,
+      latitude: 55.60406394176823,
+      reached: false,
+      color: "#42b883",
+    },
+    {
+      markerName: "Marker 2",
+      longitude: 26.4320152027895,
+      latitude: 55.60409394196893,
+      reached: false,
+      color: "#f70776",
+    },
+  ]);
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -58,7 +70,6 @@ const Home = () => {
       );
 
       return () => {
-        // Clear watchPosition when the component unmounts
         navigator.geolocation.clearWatch(watchId);
       };
     }
@@ -114,11 +125,28 @@ const Home = () => {
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
           //Pop up window
-          <Marker
-            longitude={marker.longitude}
-            latitude={marker.latitude}
-            draggable={true}
-          />
+          {markers.map((marker, index) => (
+            <Marker
+              key={index}
+              longitude={marker.longitude}
+              latitude={marker.latitude}
+              offsetTop={-20}
+              offsetLeft={-10}
+              draggable={true}
+              color={`${marker.color}`}
+            ></Marker>
+          ))}
+          {popupInfo && (
+            <Popup
+              longitude={popupInfo.longitude}
+              latitude={popupInfo.latitude}
+              onClose={() => setPopupInfo(null)}
+            >
+              <div>
+                {popupInfo.latitude.toFixed(6)},{popupInfo.longitude.toFixed(6)}
+              </div>
+            </Popup>
+          )}
         </ReactMapGL>
       </div>
     </div>

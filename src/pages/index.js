@@ -93,7 +93,8 @@ const Home = () => {
           },
           (error) => {
             console.error("Error getting location:", error.message);
-          }
+          },
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         );
       } else {
         console.error("Geolocation is not supported by this browser.");
@@ -101,7 +102,7 @@ const Home = () => {
     };
 
     getLocation();
-  }, []);
+  }, [viewport, currentLocation]);
   return (
     <div
       style={{

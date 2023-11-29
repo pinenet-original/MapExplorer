@@ -23,6 +23,7 @@ const Home = () => {
     longitude: 0,
     latitude: 0,
   });
+  const [distance, setDistance] = useState(null);
 
   const [markers, setMarkers] = useState([
     {
@@ -40,8 +41,6 @@ const Home = () => {
       color: "#f70776",
     },
   ]);
-
-  const [popupInfo, setPopupInfo] = useState(null);
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -74,17 +73,13 @@ const Home = () => {
 
   const calculateAndShowDistance = (marker) => {
     const distance = calculateDistance(
-      currentLocation.longitude,
       currentLocation.latitude,
-      marker.longitude,
-      marker.latitude
+      currentLocation.longitude,
+      marker.latitude,
+      marker.longitude
     );
 
-    setPopupInfo({
-      longitude: marker.longitude,
-      latitude: marker.latitude,
-      distance: distance.toFixed(2),
-    });
+    setDistance(distance); // No need for toFixed() here
   };
 
   return (
@@ -101,6 +96,8 @@ const Home = () => {
         <h1 className="text-6xl mb-20 text-[#50d71e] ">Map Explorer</h1>
         Current Location: {currentLocation.latitude.toFixed(6)},{" "}
         {currentLocation.longitude.toFixed(6)}
+        <p>Distance between Marker and Current Location:</p>
+        <p>{distance}</p>
       </div>
 
       <div
@@ -147,20 +144,9 @@ const Home = () => {
               offsetLeft={-10}
               draggable={true}
               color={marker.color}
-              onMouseOver={() => calculateAndShowDistance(marker)}
+              onDragEnd={(event) => calculateAndShowDistance(marker, event)}
             />
           ))}
-
-          {/* Popup */}
-          {popupInfo && (
-            <Popup
-              longitude={popupInfo.longitude}
-              latitude={popupInfo.latitude}
-              onClose={() => setPopupInfo(null)}
-            >
-              <div>Distance: {popupInfo.distance} km</div>
-            </Popup>
-          )}
         </ReactMapGL>
       </div>
     </div>

@@ -52,55 +52,53 @@ const Home = () => {
     }
   };
 
-  const onDragEnd = (marker, index, event) => {
-    const { lngLat } = event;
-    const distance = calculateDistance(
-      lngLat[0],
-      lngLat[1],
-      marker.longitude,
-      marker.latitude
-    );
+  // const onDragEnd = (marker, index, event) => {
+  //   const { lngLat } = event;
+  //   const distance = calculateDistance(
+  //     lngLat[0],
+  //     lngLat[1],
+  //     marker.longitude,
+  //     marker.latitude
+  //   );
 
-    if (distance < 10) {
-      // Adjust the distance threshold as needed
-      // Marker is considered reached, show popup
-      setPopupInfo({
-        longitude: marker.longitude,
-        latitude: marker.latitude,
-      });
+  //   if (distance < 10) {
+  //     setPopupInfo({
+  //       longitude: marker.longitude,
+  //       latitude: marker.latitude,
+  //     });
 
-      // Update the marker's reached status
-      setMarkers((prevMarkers) =>
-        prevMarkers.map((prevMarker, i) =>
-          i === index ? { ...prevMarker, reached: true } : prevMarker
-        )
-      );
-    }
-  };
+  //     setMarkers((prevMarkers) =>
+  //       prevMarkers.map((prevMarker, i) =>
+  //         i === index ? { ...prevMarker, reached: true } : prevMarker
+  //       )
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      const watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const { longitude, latitude } = position.coords;
-          setViewport((prevViewport) => ({
-            ...prevViewport,
-            longitude,
-            latitude,
-          }));
-          setCurrentLocation({ longitude, latitude });
-        },
-        (error) => {
-          console.error("Error getting geolocation:", error);
-        }
-      );
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setCurrentLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
 
-      return () => {
-        navigator.geolocation.clearWatch(watchId);
-      };
-    }
+            // If you want to update the map's center to the current location, uncomment the following line:
+            // setViewport({ ...viewport, center: [position.coords.longitude, position.coords.latitude] });
+          },
+          (error) => {
+            console.error("Error getting location:", error.message);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    };
+
+    getLocation();
   }, []);
-
   return (
     <div
       style={{
@@ -160,7 +158,7 @@ const Home = () => {
               offsetLeft={-10}
               draggable={true}
               color={marker.color}
-              onDragEnd={(event) => onDragEnd(marker, index, event)}
+              // onDragEnd={(event) => onDragEnd(marker, index, event)}
             />
           ))}
           {popupInfo && (

@@ -46,11 +46,11 @@ const Home = () => {
       const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { longitude, latitude } = position.coords;
-          setViewport((prevViewport) => ({
-            ...prevViewport,
-            longitude,
-            latitude,
-          }));
+          // setViewport((prevViewport) => ({
+          //   ...prevViewport,
+          //   longitude,
+          //   latitude,
+          // }));
           setCurrentLocation({ longitude, latitude });
         },
         (error) => {

@@ -46,59 +46,62 @@ const Home = () => {
     },
   ]);
 
-  // const handleGeolocate = () => {
-  //   if (geoControlRef.current) {
-  //     geoControlRef.current._onClickGeolocate();
-  //   }
-  // };
+  const handleGeolocate = () => {
+    if (geoControlRef.current) {
+      geoControlRef.current._onClickGeolocate();
+    }
+  };
 
-  // const onDragEnd = (marker, index, event) => {
-  //   const { lngLat } = event;
-  //   const distance = calculateDistance(
-  //     lngLat[0],
-  //     lngLat[1],
-  //     marker.longitude,
-  //     marker.latitude
-  //   );
+  const onDragEnd = (marker, index, event) => {
+    const { lngLat } = event;
+    const distance = calculateDistance(
+      lngLat[0],
+      lngLat[1],
+      marker.longitude,
+      marker.latitude
+    );
 
-  //   if (distance < 10) {
-  //     setPopupInfo({
-  //       longitude: marker.longitude,
-  //       latitude: marker.latitude,
-  //     });
+    if (distance < 10) {
+      setPopupInfo({
+        longitude: marker.longitude,
+        latitude: marker.latitude,
+      });
 
-  //     setMarkers((prevMarkers) =>
-  //       prevMarkers.map((prevMarker, i) =>
-  //         i === index ? { ...prevMarker, reached: true } : prevMarker
-  //       )
-  //     );
-  //   }
-  // };
+      setMarkers((prevMarkers) =>
+        prevMarkers.map((prevMarker, i) =>
+          i === index ? { ...prevMarker, reached: true } : prevMarker
+        )
+      );
+    }
+  };
 
-  // useEffect(() => {
-  //   const getLocation = () => {
-  //     if (navigator.geolocation) {
-  //       navigator.geolocation.getCurrentPosition(
-  //         (position) => {
-  //           setCurrentLocation({
-  //             latitude: position.coords.latitude,
-  //             longitude: position.coords.longitude,
-  //           });
+  useEffect(() => {
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setCurrentLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
 
-  //           // If you want to update the map's center to the current location, uncomment the following line:
-  //           // setViewport({ ...viewport, center: [position.coords.longitude, position.coords.latitude] });
-  //         },
-  //         (error) => {
-  //           console.error("Error getting location:", error.message);
-  //         }
-  //       );
-  //     } else {
-  //       console.error("Geolocation is not supported by this browser.");
-  //     }
-  //   };
+            // If you want to update the map's center to the current location, uncomment the following line:
+            setViewport({
+              ...viewport,
+              center: [position.coords.longitude, position.coords.latitude],
+            });
+          },
+          (error) => {
+            console.error("Error getting location:", error.message);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    };
 
-  //   getLocation();
-  // }, []);
+    getLocation();
+  }, []);
   return (
     <div
       style={{
@@ -144,7 +147,7 @@ const Home = () => {
             showUserHeading
             ref={geoControlRef}
             fitBoundsOptions={{ zoom: 20, pitch: 70 }}
-            // onClick={handleGeolocate}
+            onClick={handleGeolocate}
           />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
@@ -158,7 +161,7 @@ const Home = () => {
               offsetLeft={-10}
               draggable={true}
               color={marker.color}
-              // onDragEnd={(event) => onDragEnd(marker, index, event)}
+              onDragEnd={(event) => onDragEnd(marker, index, event)}
             />
           ))}
           {popupInfo && (

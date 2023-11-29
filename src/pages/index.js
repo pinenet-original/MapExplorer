@@ -52,6 +52,32 @@ const Home = () => {
     }
   };
 
+  const onDragEnd = (marker, index, event) => {
+    const { lngLat } = event;
+    const distance = calculateDistance(
+      lngLat[0],
+      lngLat[1],
+      marker.longitude,
+      marker.latitude
+    );
+
+    if (distance < 0.01) {
+      // Adjust the distance threshold as needed
+      // Marker is considered reached, show popup
+      setPopupInfo({
+        longitude: marker.longitude,
+        latitude: marker.latitude,
+      });
+
+      // Update the marker's reached status
+      setMarkers((prevMarkers) =>
+        prevMarkers.map((prevMarker, i) =>
+          i === index ? { ...prevMarker, reached: true } : prevMarker
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     if ("geolocation" in navigator) {
       const watchId = navigator.geolocation.watchPosition(
@@ -133,8 +159,9 @@ const Home = () => {
               offsetTop={-20}
               offsetLeft={-10}
               draggable={true}
-              color={`${marker.color}`}
-            ></Marker>
+              color={marker.color}
+              onDragEnd={(event) => onDragEnd(marker, index, event)}
+            />
           ))}
           {popupInfo && (
             <Popup
@@ -142,9 +169,7 @@ const Home = () => {
               latitude={popupInfo.latitude}
               onClose={() => setPopupInfo(null)}
             >
-              <div>
-                {popupInfo.latitude.toFixed(6)},{popupInfo.longitude.toFixed(6)}
-              </div>
+              <div>Your position is here</div>
             </Popup>
           )}
         </ReactMapGL>

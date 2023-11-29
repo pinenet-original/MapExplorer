@@ -61,7 +61,7 @@ const Home = () => {
       marker.latitude
     );
 
-    if (distance < 0.01) {
+    if (distance < 10) {
       // Adjust the distance threshold as needed
       // Marker is considered reached, show popup
       setPopupInfo({

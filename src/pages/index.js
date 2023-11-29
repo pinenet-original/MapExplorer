@@ -24,8 +24,8 @@ const Home = () => {
     latitude: 0,
   });
   const [distance, setDistance] = useState(null);
-  console.log(distance);
-  const [approachPopupShown, setApproachPopupShown] = useState(false);
+  const [approachAlertShown, setApproachAlertShown] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
 
   const marker = {
     markerName: "Marker 1",
@@ -73,20 +73,22 @@ const Home = () => {
         marker.latitude &&
         marker.longitude
       ) {
-        const distance = calculateDistance(
+        const newDistance = calculateDistance(
           currentLocation.latitude,
           currentLocation.longitude,
           marker.latitude,
           marker.longitude
         );
-        setDistance(distance);
+        setDistance(newDistance);
 
         const threshold = 10;
-        if (distance < threshold && !approachPopupShown) {
-          setApproachPopupShown(true);
-        } else if (distance >= threshold && approachPopupShown) {
-          // Reset the flag when the distance is above the threshold again
-          setApproachPopupShown(false);
+        if (newDistance < threshold && !approachAlertShown) {
+          setApproachAlertShown(true);
+          setPopupVisible(true); // Show the popup when marker is approached
+        } else if (newDistance >= threshold && approachAlertShown) {
+          // Reset the flag and hide the popup when the distance is above the threshold again
+          setApproachAlertShown(false);
+          setPopupVisible(false);
         }
       }
     };
@@ -96,7 +98,7 @@ const Home = () => {
     return () => {
       // Cleanup logic if needed
     };
-  }, [currentLocation, approachPopupShown, marker]);
+  }, [currentLocation, approachAlertShown, marker]);
 
   return (
     <div
@@ -163,14 +165,16 @@ const Home = () => {
             draggable={true}
             color={marker.color}
           />
-          {approachPopupShown && (
+          {popupVisible && (
             <Popup
-              longitude={-100}
-              latitude={40}
-              anchor="bottom"
-              onClose={() => setApproachPopupShown(false)}
+              longitude={marker.longitude}
+              latitude={marker.latitude}
+              onClose={() => setPopupVisible(false)}
             >
-              You are here
+              <div>
+                <h3>Marker Reached!</h3>
+                <p>You have reached the marker.</p>
+              </div>
             </Popup>
           )}
         </ReactMapGL>

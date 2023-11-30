@@ -84,9 +84,8 @@ const Home = () => {
         const threshold = 10;
         if (newDistance < threshold && !approachAlertShown) {
           setApproachAlertShown(true);
-          setPopupVisible(true); // Show the popup when marker is approached
+          setPopupVisible(true);
         } else if (newDistance >= threshold && approachAlertShown) {
-          // Reset the flag and hide the popup when the distance is above the threshold again
           setApproachAlertShown(false);
           setPopupVisible(false);
         }
@@ -94,11 +93,7 @@ const Home = () => {
     };
 
     handleMove();
-
-    return () => {
-      // Cleanup logic if needed
-    };
-  }, [currentLocation, approachAlertShown, marker]);
+  }, [currentLocation, approachAlertShown, marker, approachAlertShown]);
 
   return (
     <div
@@ -141,7 +136,7 @@ const Home = () => {
           onMove={(e) => setViewport(e.viewport)}
           onViewportChange={(newViewport) => {
             setViewport(newViewport);
-            handleMove(); // Call handleMove on map movement
+            handleMove();
           }}
         >
           <GeolocateControl

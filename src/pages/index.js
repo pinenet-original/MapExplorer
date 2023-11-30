@@ -81,17 +81,10 @@ const Home = () => {
         );
         setDistance(newDistance);
 
-        const threshold = 10;
+        const threshold = 50;
         if (newDistance < threshold && !approachAlertShown) {
           setApproachAlertShown(true);
           setPopupVisible(true);
-          setMarker({
-            markerName: "Marker 1",
-            longitude: 27.4320152027785,
-            latitude: 58.60406394176823,
-            reached: false,
-            color: "#42b883",
-          });
         } else if (newDistance >= threshold && approachAlertShown) {
           setApproachAlertShown(false);
           setPopupVisible(false);
@@ -171,7 +164,16 @@ const Home = () => {
             <Popup
               longitude={marker.longitude}
               latitude={marker.latitude}
-              onClose={() => setPopupVisible(false)}
+              onClose={() => {
+                setPopupVisible(false),
+                  setMarker({
+                    markerName: "Marker 1",
+                    longitude: 27.4320152027785,
+                    latitude: 58.60406394176823,
+                    reached: false,
+                    color: "#42b883",
+                  });
+              }}
             >
               <div>
                 <h3>Marker Reached!</h3>

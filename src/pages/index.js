@@ -27,13 +27,13 @@ const Home = () => {
   const [approachAlertShown, setApproachAlertShown] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
 
-  const marker = {
+  const [marker, setMarker] = useState({
     markerName: "Marker 1",
     longitude: 26.4320152027785,
     latitude: 55.60406394176823,
     reached: false,
     color: "#42b883",
-  };
+  });
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -85,6 +85,13 @@ const Home = () => {
         if (newDistance < threshold && !approachAlertShown) {
           setApproachAlertShown(true);
           setPopupVisible(true);
+          setMarker({
+            markerName: "Marker 1",
+            longitude: 27.4320152027785,
+            latitude: 58.60406394176823,
+            reached: false,
+            color: "#42b883",
+          });
         } else if (newDistance >= threshold && approachAlertShown) {
           setApproachAlertShown(false);
           setPopupVisible(false);

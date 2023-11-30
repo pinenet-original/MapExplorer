@@ -93,7 +93,7 @@ const Home = () => {
     };
 
     handleMove();
-  }, [currentLocation, approachAlertShown, marker, approachAlertShown]);
+  }, [currentLocation, approachAlertShown, marker, popupVisible]);
 
   return (
     <div

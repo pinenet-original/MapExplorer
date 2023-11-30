@@ -178,7 +178,7 @@ const Home = () => {
                     longitude: 26.4320152027785,
                     latitude: 55.60406394176823,
                     reached: false,
-                    color: "green",
+                    color: "#FFC0CB",
                     markerInfo: {
                       name: " Marker 2",
                       descriptionTitle: "HELLO",

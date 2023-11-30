@@ -5,6 +5,7 @@ import ReactMapGL, {
   NavigationControl,
   Marker,
   Popup,
+  ScaleControl,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
@@ -33,6 +34,11 @@ const Home = () => {
     latitude: 55.60406394176823,
     reached: false,
     color: "#42b883",
+    markerInfo: {
+      name: "Marker 1",
+      descriptionTitle: "Marker Reached!",
+      descriptionText: "You have reached the marker.",
+    },
   });
 
   const handleGeolocate = () => {
@@ -148,6 +154,7 @@ const Home = () => {
             fitBoundsOptions={{ zoom: 20, pitch: 70 }}
             onClick={handleGeolocate}
           />
+          <ScaleControl />
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
 
@@ -167,17 +174,22 @@ const Home = () => {
               onClose={() => {
                 setPopupVisible(false),
                   setMarker({
-                    markerName: "Marker 1",
-                    longitude: 27.4320152027785,
-                    latitude: 58.60406394176823,
+                    markerName: "Marker 2",
+                    longitude: 26.4320152027785,
+                    latitude: 55.60406394176823,
                     reached: false,
-                    color: "#42b883",
+                    color: "green",
+                    markerInfo: {
+                      name: " Marker 2",
+                      descriptionTitle: "HELLO",
+                      descriptionText: "Reached Marker 2",
+                    },
                   });
               }}
             >
               <div>
-                <h3>Marker Reached!</h3>
-                <p>You have reached the marker.</p>
+                <h3>{marker.markerInfo.descriptionTitle}</h3>
+                <p>{marker.markerInfo.descriptionText}</p>
               </div>
             </Popup>
           )}

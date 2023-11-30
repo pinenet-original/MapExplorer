@@ -175,8 +175,8 @@ const Home = () => {
                 setPopupVisible(false),
                   setMarker({
                     markerName: "Marker 2",
-                    longitude: 26.4320152027785,
-                    latitude: 55.60406394176823,
+                    longitude: 26.4320152027781,
+                    latitude: 55.60406394176819,
                     reached: false,
                     color: "#FFC0CB",
                     markerInfo: {

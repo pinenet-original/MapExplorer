@@ -254,19 +254,23 @@ const Home = () => {
         <p>Distance between Marker and Current Location:</p>
         <p>{xyz}</p>
 
-        <button 
-          className="border border-blue-500 rounded-lg py-2 px-4 w-36 mt-4" 
-          onClick={startNavigationModeManager} 
-          style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>
-        START NAVIGATION
-        </button>
+        <div>
+          <button 
+            className="border border-blue-500 rounded-lg py-2 px-4 w-36 mt-4" 
+            onClick={startNavigationModeManager} 
+            style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>
+          START NAVIGATION
+          </button>
+        </div>
+        <div>
+          <button 
+            className="border border-blue-500 rounded-lg py-2 px-4 w-36 mx-8 mt-4" 
+            onClick={blueLineUpdateManager} 
+            style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>
+          UPDATE BLUE LINE
+          </button>
+        </div>
 
-        <button 
-          className="border border-blue-500 rounded-lg py-2 px-4 w-36 mx-8 mt-4" 
-          onClick={blueLineUpdateManager} 
-          style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>
-        UPDATE BLUE LINE
-        </button>
       </div>
 
       <div

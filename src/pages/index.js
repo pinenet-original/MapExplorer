@@ -16,7 +16,7 @@ import { calculateDistance } from "@/utils/helpers";
 
 
 const THRESHOLD = 15;
-const STEPS_THRESHOLD = 1;
+const STEPS_THRESHOLD = 5;
 
 const Home = () => {
   const [xyz, setXyz] = useState(0)
@@ -122,7 +122,7 @@ const Home = () => {
       const response = await fetch(
         `https://api.mapbox.com/directions/v5/mapbox/walking/${[currentLocation.longitude, currentLocation.latitude].join(
           ","
-        )};${[currentMarker.longitude,currentMarker.latitude].join(",")}?steps=true&geometries=geojson&access_token=${
+        )};${[currentMarker.longitude,currentMarker.latitude].join(",")}?steps=true&walkway_bias=1&geometries=geojson&access_token=${
           process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
         }`
       );
@@ -183,7 +183,7 @@ const Home = () => {
   const blueLineUpdateManager = () => {
     const isCoords = currentLocation.latitude !== 0 && currentLocation.longitude !== 0 && currentMarker.latitude && currentMarker.longitude && coords.length > 0
     if (isCoords) {
-      const locatioToNextStepDistance = calculateDistance(currentLocation.latitude, currentLocation.longitude, coords[0][1], coords[0][0]);
+      const locatioToNextStepDistance = calculateDistance(currentLocation.latitude, currentLocation.longitude, coords[1][1], coords[1][0]);
       setXyz(locatioToNextStepDistance)
 
       if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
@@ -273,6 +273,7 @@ const Home = () => {
         style={{
           height: "40vh",
           display: "flex",
+          width: '400px',
           flexDirection: "column",
           justifyContent: "center",
           textAlign: "center",
@@ -281,7 +282,7 @@ const Home = () => {
         <ReactMapGL
           style={{
             marginTop: "40px",
-            width: "400px",
+            width: "100%",
             borderRadius: "15px",
             boxShadow: "10px 10px 5px 0px rgba(0,0,0,0.75)",
           }}

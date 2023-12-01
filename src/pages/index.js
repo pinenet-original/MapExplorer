@@ -17,61 +17,12 @@ const THRESHOLD = 10;
 
 const Home = () => {
 
-
-  // Initial Map settings<
+  // Initial Map settings
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
     zoom: 15,
   });
-
-
-  const [currentMarker, setCurrentMarker] = useState({});
-
-
-
-
-  const popupCloseManager = () => {
-    setMarkerList(prev => {
-      const temp = [...prev]
-      temp.forEach((marker, idx) => {
-        marker.reached = false
-        if (idx === currentMarker.idx + 1) marker.visible = true;
-        else marker.visible = false
-      })
-      return temp
-    })
-  }
-  
-
-  const handleGeolocate = () => {
-    if (geoControlRef.current) {
-      geoControlRef.current._onClickGeolocate();
-    }
-  };
-
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      const watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const { longitude, latitude } = position.coords;
-
-          setCurrentLocation({ longitude, latitude });
-        },
-        (error) => {
-          console.error("Error getting geolocation:", error);
-        }
-      );
-
-      return () => {
-        navigator.geolocation.clearWatch(watchId);
-      };
-    }
-  }, []);
-
-
-
-  // GOOD
   const [distance, setDistance] = useState(null);
   const [currentLocation, setCurrentLocation] = useState({
     longitude: 0,
@@ -131,14 +82,32 @@ const Home = () => {
       },
     },
   ])
+  const [currentMarker, setCurrentMarker] = useState({});
 
-
+  // Map Setup Functions
   const geoControlRef = useRef();
+  const handleGeolocate = () => {
+    if (geoControlRef.current) {
+      geoControlRef.current._onClickGeolocate();
+    }
+  };
 
   const showReachedMarkerPopup = () => {
     setMarkerList(prev => {
       const temp = [...prev]
       temp[currentMarker.idx].reached = true;
+      return temp
+    })
+  }
+
+  const popupCloseManager = () => {
+    setMarkerList(prev => {
+      const temp = [...prev]
+      temp.forEach((marker, idx) => {
+        marker.reached = false
+        if (idx === currentMarker.idx + 1) marker.visible = true;
+        else marker.visible = false
+      })
       return temp
     })
   }
@@ -157,8 +126,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-
-
     handleMove();
   }, [currentLocation, currentMarker]);
 
@@ -170,6 +137,25 @@ const Home = () => {
       ...markerList.filter(marker => marker.visible)[0]
     }) 
   }, [markerList])
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
+
+          setCurrentLocation({ longitude, latitude });
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error);
+        }
+      );
+
+      return () => {
+        navigator.geolocation.clearWatch(watchId);
+      };
+    }
+  }, []);
 
   return (
     <div

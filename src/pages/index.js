@@ -1,5 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback} from "react";
+import mapboxgl from 'mapbox-gl';
 import ReactMapGL, {
+  Map,
   FullscreenControl,
   GeolocateControl,
   NavigationControl,
@@ -10,36 +12,37 @@ import ReactMapGL, {
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
 
-const Home = () => {
-  const geoControlRef = useRef();
 
-  // Initial Map settings
+const THRESHOLD = 50;
+
+const Home = () => {
+
+
+  // Initial Map settings<
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
     zoom: 15,
   });
 
-  const [currentLocation, setCurrentLocation] = useState({
-    longitude: 0,
-    latitude: 0,
-  });
-  const [distance, setDistance] = useState(null);
-  const [approachAlertShown, setApproachAlertShown] = useState(false);
-  const [popupVisible, setPopupVisible] = useState(false);
 
-  const [marker, setMarker] = useState({
-    markerName: "Marker 1",
-    longitude: 26.4320152027785,
-    latitude: 55.60406394176823,
-    reached: false,
-    color: "#42b883",
-    markerInfo: {
-      name: "Marker 1",
-      descriptionTitle: "Marker Reached!",
-      descriptionText: "You have reached the marker.",
-    },
-  });
+  const [currentMarker, setCurrentMarker] = useState({});
+
+
+
+
+  const popupCloseManager = () => {
+    setMarkerList(prev => {
+      const temp = [...prev]
+      temp.forEach((marker, idx) => {
+        marker.reached = false
+        if (idx === currentMarker.idx + 1) marker.visible = true;
+        else marker.visible = false
+      })
+      return temp
+    })
+  }
+  
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -52,11 +55,7 @@ const Home = () => {
       const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { longitude, latitude } = position.coords;
-          // setViewport((prevViewport) => ({
-          //   ...prevViewport,
-          //   longitude,
-          //   latitude,
-          // }));
+
           setCurrentLocation({ longitude, latitude });
         },
         (error) => {
@@ -70,36 +69,107 @@ const Home = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const handleMove = () => {
-      // Check if both currentLocation and marker have valid coordinates
-      if (
-        currentLocation.latitude !== 0 &&
-        currentLocation.longitude !== 0 &&
-        marker.latitude &&
-        marker.longitude
-      ) {
-        const newDistance = calculateDistance(
-          currentLocation.latitude,
-          currentLocation.longitude,
-          marker.latitude,
-          marker.longitude
-        );
-        setDistance(newDistance);
 
-        const threshold = 50;
-        if (newDistance < threshold && !approachAlertShown) {
-          setApproachAlertShown(true);
-          setPopupVisible(true);
-        } else if (newDistance >= threshold && approachAlertShown) {
-          setApproachAlertShown(false);
-          setPopupVisible(false);
-        }
+
+  // GOOD
+  const [distance, setDistance] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+  const [markerList, setMarkerList] = useState([
+    {
+      visible: true,
+      markerName: "Marker 1",
+      longitude: 26.4320152027785,
+      latitude: 55.60406394176823,
+      reached: false,
+      color: "red",
+      markerInfo: {
+        name: "Marker 1",
+        descriptionTitle: "Marker 1 Reached!",
+        descriptionText: "You have reached the marker.",
+      },
+    },
+    {
+      visible: false,
+      markerName: "Marker 2",
+      longitude: 27.4320152027785,
+      latitude: 55.60406394176823,
+      reached: false,
+      color: "blue",
+      markerInfo: {
+        name: "Marker 2",
+        descriptionTitle: "Marker 2 Reached!",
+        descriptionText: "You have reached the marker.",
+      },
+    },  
+    {
+      visible: false,
+      markerName: "Marker 3",
+      longitude: 28.4320152027785,
+      latitude: 55.60406394176823,
+      reached: false,
+      color: "green",
+      markerInfo: {
+        name: "Marker 3",
+        descriptionTitle: "Marker 3 Reached!",
+        descriptionText: "You have reached the marker.",
+      },
+    },  
+    {
+      visible: false,
+      markerName: "Marker 4",
+      longitude: 29.4320152027785,
+      latitude: 55.60406394176823,
+      reached: false,
+      color: "yellow",
+      markerInfo: {
+        name: "Marker 4",
+        descriptionTitle: "Marker 4 Reached!",
+        descriptionText: "You have reached the marker.",
+      },
+    },
+  ])
+
+
+  const geoControlRef = useRef();
+
+  const showReachedMarkerPopup = () => {
+    setMarkerList(prev => {
+      const temp = [...prev]
+      temp[currentMarker.idx].reached = true;
+      return temp
+    })
+  }
+
+  const handleMove = () => {
+    const isCoords = currentLocation.latitude !== 0 && currentLocation.longitude !== 0 && currentMarker.latitude && currentMarker.longitude
+    
+    if (isCoords) {
+      const locatioToMarkerDistance = calculateDistance(currentLocation.latitude, currentLocation.longitude, currentMarker.latitude, currentMarker.longitude);
+      setDistance(locatioToMarkerDistance);
+
+      if (locatioToMarkerDistance < THRESHOLD) {
+        showReachedMarkerPopup()
       }
-    };
+    }
+  };
+
+  useEffect(() => {
+
 
     handleMove();
-  }, [currentLocation, approachAlertShown, marker, popupVisible]);
+  }, [currentLocation, currentMarker]);
+
+  useEffect(() => {
+
+    const curentMarkerIdx = markerList.findIndex(obj => obj.visible === true);
+    setCurrentMarker({
+      idx: curentMarkerIdx,
+      ...markerList.filter(marker => marker.visible)[0]
+    }) 
+  }, [markerList])
 
   return (
     <div
@@ -117,6 +187,8 @@ const Home = () => {
         {currentLocation.longitude.toFixed(6)}
         <p>Distance between Marker and Current Location:</p>
         <p>{distance}</p>
+
+        <span onClick={showReachedMarkerPopup} style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>SHOW POPUP</span>
       </div>
 
       <div
@@ -128,7 +200,7 @@ const Home = () => {
           textAlign: "center",
         }}
       >
-        <ReactMapGL
+        <Map
           style={{
             marginTop: "40px",
             width: "400px",
@@ -159,15 +231,38 @@ const Home = () => {
           <FullscreenControl />
 
           {/* Marker */}
-          <Marker
-            longitude={marker.longitude}
-            latitude={marker.latitude}
-            offsetTop={-20}
-            offsetLeft={-10}
-            draggable={true}
-            color={marker.color}
-          />
-          {popupVisible && (
+          {markerList.map((marker, idx) => {
+            if(marker.visible) return (
+              <>
+              <Marker
+                key={marker.markerName}
+                longitude={marker.longitude}
+                latitude={marker.latitude}
+                offsetTop={-20}
+                offsetLeft={-10}
+                draggable={true}
+                color={marker.color}
+              />
+              {
+                marker.reached && 
+                <Popup
+                  key={marker.markerName}
+                  longitude={marker.longitude}
+                  latitude={marker.latitude}
+                  onClose={() => {popupCloseManager()}}
+                >
+                  <div key={marker.markerName}>
+                    <h3>{marker.markerInfo.descriptionTitle}</h3>
+                    <p>{marker.markerInfo.descriptionText}</p>
+                    <button onClick={popupCloseManager} className="genry">SEE NEXT SIGHTSEEING</button>
+                  </div>
+                </Popup>
+              }
+              </>
+            )
+          })}
+
+          {/* {popupVisible && (
             <Popup
               longitude={marker.longitude}
               latitude={marker.latitude}
@@ -192,8 +287,8 @@ const Home = () => {
                 <p>{marker.markerInfo.descriptionText}</p>
               </div>
             </Popup>
-          )}
-        </ReactMapGL>
+          )} */}
+        </Map>
       </div>
     </div>
   );

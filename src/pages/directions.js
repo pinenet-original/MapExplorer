@@ -29,7 +29,6 @@ const Home = () => {
   const [coords, setCoords] = useState([]);
   const [start, setStart] = useState([26.432730917247454, 55.60407906787367]);
   const [end, setEnd] = useState([26.44709, 55.59473]);
-  console.log(end);
   const [steps, setSteps] = useState([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [totalDistance, setTotalDistance] = useState(0);
@@ -49,6 +48,7 @@ const Home = () => {
     try {
       setIsFetching(true);
 
+      console.log(22, start);
       const response = await fetch(
         `https://api.mapbox.com/directions/v5/mapbox/walking/${start.join(
           ","

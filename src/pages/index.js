@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useMemo, useCallback} from "react";
-import mapboxgl from 'mapbox-gl';
+import { lineStyle } from "@/utils/geoJsonData";
 import ReactMapGL, {
   Map,
   FullscreenControl,
@@ -7,26 +7,32 @@ import ReactMapGL, {
   NavigationControl,
   Marker,
   Popup,
+  Layer,
+  Source,
   ScaleControl,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
 
 
-const THRESHOLD = 10;
+const THRESHOLD = 15;
+const STEPS_THRESHOLD = 2;
 
 const Home = () => {
 
+  //GOOOOOOOD
+
   // Initial Map settings
+  const [mapZoom, setMapZoom] = useState(15);
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
-    zoom: 15,
+    zoom: 2,
   });
   const [distance, setDistance] = useState(null);
   const [currentLocation, setCurrentLocation] = useState({
-    longitude: 0,
     latitude: 0,
+    longitude: 0,
   });
   const [markerList, setMarkerList] = useState([
     {
@@ -83,14 +89,62 @@ const Home = () => {
     },
   ])
   const [currentMarker, setCurrentMarker] = useState({});
+  const [coords, setCoords] = useState([]);
+  const [steps, setSteps] = useState([]);
+  const [showRoutes, setShowRoutes] = useState([]);
+  
 
   // Map Setup Functions
+  const startPoint = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [...coords],
+        },
+      },
+    ],
+  };
+
   const geoControlRef = useRef();
   const handleGeolocate = () => {
     if (geoControlRef.current) {
       geoControlRef.current._onClickGeolocate();
     }
   };
+
+  const getRoute = async () => {
+    try {
+
+      const response = await fetch(
+        `https://api.mapbox.com/directions/v5/mapbox/walking/${[currentLocation.longitude, currentLocation.latitude].join(
+          ","
+        )};${[currentMarker.longitude,currentMarker.latitude].join(",")}?steps=true&geometries=geojson&access_token=${
+          process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+        }`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch route data");
+      }
+
+      const data = await response.json();
+      const route = data.routes[0];
+
+      setCoords(route.geometry.coordinates);
+
+      setSteps(route.legs[0].steps.map((step) => step.maneuver.instruction));
+      setShowRoutes(true)
+    } catch (error) {
+      console.error("Error fetching route data:", error);
+    }
+  };
+
+  const startNavigationModeManager = () => {
+    getRoute()
+  }
 
   const showReachedMarkerPopup = () => {
     setMarkerList(prev => {
@@ -125,8 +179,22 @@ const Home = () => {
     }
   };
 
+  const blueLineUpdateManager = () => {
+    const isCoords = currentLocation.latitude !== 0 && currentLocation.longitude !== 0 && currentMarker.latitude && currentMarker.longitude && coords.length > 0
+    if (isCoords) {
+      const locatioToNextStepDistance = calculateDistance(currentLocation.latitude, currentLocation.longitude, coords[0][0], coords[0][1]);
+      
+      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
+        setCoords(prev => {
+          return [...prev].splice(1)
+        })
+      }
+    }
+  }
+
   useEffect(() => {
     handleMove();
+    blueLineUpdateManager()
   }, [currentLocation, currentMarker]);
 
   useEffect(() => {
@@ -157,6 +225,16 @@ const Home = () => {
     }
   }, []);
 
+  useEffect(() => {
+    // Activate as soon as the control is loaded
+    geoControlRef.current?.trigger();
+  }, [geoControlRef.current]);
+
+
+  useEffect(() => {
+    console.log(coords)
+  }, [coords])
+
   return (
     <div
       style={{
@@ -174,7 +252,19 @@ const Home = () => {
         <p>Distance between Marker and Current Location:</p>
         <p>{distance}</p>
 
-        <span onClick={showReachedMarkerPopup} style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>SHOW POPUP</span>
+        <button 
+          className="border border-blue-500 rounded-lg py-2 px-4 w-36 mt-4" 
+          onClick={startNavigationModeManager} 
+          style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>
+        START NAVIGATION
+        </button>
+
+        <button 
+          className="border border-blue-500 rounded-lg py-2 px-4 w-36 mx-8 mt-4" 
+          onClick={blueLineUpdateManager} 
+          style={{cursor: "pointer", background: 'darkcyan', padding: '10px 20px'}}>
+        UPDATE BLUE LINE
+        </button>
       </div>
 
       <div
@@ -186,7 +276,7 @@ const Home = () => {
           textAlign: "center",
         }}
       >
-        <Map
+        <ReactMapGL
           style={{
             marginTop: "40px",
             width: "400px",
@@ -209,14 +299,14 @@ const Home = () => {
             trackUserLocation={true}
             showUserHeading
             ref={geoControlRef}
-            fitBoundsOptions={{ zoom: 20, pitch: 70 }}
+            fitBoundsOptions={{ zoom: mapZoom}}
             onClick={handleGeolocate}
           />
-          <ScaleControl />
+          {/* <ScaleControl /> */}
           <NavigationControl position="bottom-right" />
           <FullscreenControl />
 
-          {/* Marker */}
+
           {markerList.map((marker, idx) => {
             if(marker.visible) return (
               <>
@@ -248,33 +338,16 @@ const Home = () => {
             )
           })}
 
-          {/* {popupVisible && (
-            <Popup
-              longitude={marker.longitude}
-              latitude={marker.latitude}
-              onClose={() => {
-                setPopupVisible(false),
-                  setMarker({
-                    markerName: "Marker 2",
-                    longitude: 27.4320152027781,
-                    latitude: 58.60406394176819,
-                    reached: false,
-                    color: "#FFC0CB",
-                    markerInfo: {
-                      name: " Marker 2",
-                      descriptionTitle: "HELLO",
-                      descriptionText: "Reached Marker 2",
-                    },
-                  });
-              }}
-            >
-              <div>
-                <h3>{marker.markerInfo.descriptionTitle}</h3>
-                <p>{marker.markerInfo.descriptionText}</p>
-              </div>
-            </Popup>
-          )} */}
-        </Map>
+          { showRoutes &&
+            <>
+              <Source id="routeSource" type="geojson" data={startPoint}>
+                <Layer {...lineStyle} />
+              </Source>
+
+            </>
+          }
+
+        </ReactMapGL>
       </div>
     </div>
   );

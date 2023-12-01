@@ -13,7 +13,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance } from "@/utils/helpers";
 
 
-const THRESHOLD = 50;
+const THRESHOLD = 10;
 
 const Home = () => {
 
@@ -81,8 +81,8 @@ const Home = () => {
     {
       visible: true,
       markerName: "Marker 1",
-      longitude: 26.4320152027785,
-      latitude: 55.60406394176823,
+      latitude: 55.605714,
+      longitude: 26.429418,
       reached: false,
       color: "red",
       markerInfo: {
@@ -94,8 +94,8 @@ const Home = () => {
     {
       visible: false,
       markerName: "Marker 2",
-      longitude: 27.4320152027785,
-      latitude: 55.60406394176823,
+      latitude: 55.604460,
+      longitude: 26.427806,
       reached: false,
       color: "blue",
       markerInfo: {
@@ -107,8 +107,8 @@ const Home = () => {
     {
       visible: false,
       markerName: "Marker 3",
-      longitude: 28.4320152027785,
-      latitude: 55.60406394176823,
+      latitude: 55.604293,
+      longitude: 26.426167,
       reached: false,
       color: "green",
       markerInfo: {
@@ -120,8 +120,8 @@ const Home = () => {
     {
       visible: false,
       markerName: "Marker 4",
-      longitude: 29.4320152027785,
-      latitude: 55.60406394176823,
+      latitude: 55.603554,
+      longitude: 26.431648,
       reached: false,
       color: "yellow",
       markerInfo: {

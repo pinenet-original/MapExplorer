@@ -16,9 +16,10 @@ import { calculateDistance } from "@/utils/helpers";
 
 
 const THRESHOLD = 15;
-const STEPS_THRESHOLD = 2;
+const STEPS_THRESHOLD = 1;
 
 const Home = () => {
+  const [xyz, setXyz] = useState(0)
 
   //GOOOOOOOD
 
@@ -182,8 +183,9 @@ const Home = () => {
   const blueLineUpdateManager = () => {
     const isCoords = currentLocation.latitude !== 0 && currentLocation.longitude !== 0 && currentMarker.latitude && currentMarker.longitude && coords.length > 0
     if (isCoords) {
-      const locatioToNextStepDistance = calculateDistance(currentLocation.latitude, currentLocation.longitude, coords[0][0], coords[0][1]);
-      
+      const locatioToNextStepDistance = calculateDistance(currentLocation.latitude, currentLocation.longitude, coords[0][1], coords[0][0]);
+      setXyz(locatioToNextStepDistance)
+
       if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
         setCoords(prev => {
           return [...prev].splice(1)
@@ -250,7 +252,7 @@ const Home = () => {
         Current Location: {currentLocation.latitude.toFixed(6)},{" "}
         {currentLocation.longitude.toFixed(6)}
         <p>Distance between Marker and Current Location:</p>
-        <p>{distance}</p>
+        <p>{xyz}</p>
 
         <button 
           className="border border-blue-500 rounded-lg py-2 px-4 w-36 mt-4" 

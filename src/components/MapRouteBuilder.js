@@ -6,6 +6,8 @@ import {Layer, Source} from "react-map-gl";
 export const MapRouteBuilder = ({ showRoutes, currentLocation, currentMarker}) => {
   const [coords, setCoords] = useState([]);
   const [steps, setSteps] = useState([]);
+  const [xyz, setXyz] = useState(0)
+
 
   const startPoint = {
     type: "FeatureCollection",

@@ -6,7 +6,6 @@ export const RoutesList = ({routeSetter}) => {
     routeSetter(listOfRoutes[idx])
   }
 
-
   return (
     <div className={styles.routeListSelector}>
         {listOfRoutes.map((route, idx) => {

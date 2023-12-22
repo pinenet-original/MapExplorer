@@ -3,42 +3,32 @@ import {useGeolocation} from "@/hooks/UseGeolocation"
 import "mapbox-gl/dist/mapbox-gl.css";
 import { calculateDistance, showReachedMarkerPopup, popupCloseManager } from "@/utils/helpers";
 import {THRESHOLD} from "@/data/constantas";
-import {MapRouteBuilder} from "@/components/MapRouteBuilder"
+import {MapRouteBuilder} from "@/components/MapRouteBuilder";
+import {MapMarkers} from "@/components/MapMarkers";
 
 import ReactMapGL, {
   FullscreenControl,
   GeolocateControl,
-  NavigationControl,
-  Marker,
-  Popup
+  NavigationControl
 } from "react-map-gl";
 
 export const MapComponent = ({selectedRoute, stopRoute}) => {
   const { currentLocation, error } = useGeolocation();
   const mapRef = useRef();
-
-
-  const [mapZoom, setMapZoom] = useState(15);
-  const [markerList, setMarkerList] = useState(selectedRoute.data);
-  const [currentMarker, setCurrentMarker] = useState({});
-
-
-  const [showRoutes, setShowRoutes] = useState([]);
-
-
-  const [distance, setDistance] = useState(null);
-  const [xyz, setXyz] = useState(0)
-
+  const geoControlRef = useRef();
 
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
     zoom: 2,
   });
+  const [mapZoom, setMapZoom] = useState(15);
+  const [markerList, setMarkerList] = useState(selectedRoute.data);
+  const [currentMarker, setCurrentMarker] = useState({});
+  const [showRoutes, setShowRoutes] = useState(false);
+  const [distance, setDistance] = useState(null);
 
 
-
-  const geoControlRef = useRef();
   const handleGeolocate = () => {
     if (geoControlRef.current) {
       geoControlRef.current._onClickGeolocate();
@@ -60,11 +50,9 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
     console.log('Map fully loaded');
     geoControlRef.current.trigger();
   };
-
   const showNavigationManager = () => {
     setShowRoutes(true)
   }
-
 
   useEffect(() => {
     const curentMarkerIdx = markerList?.findIndex(obj => obj.visible === true);
@@ -88,6 +76,17 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
             >
                 NAVIGATE
             </div>
+            {
+              !showRoutes 
+              &&
+              <div 
+                className='absolute z-50 cursor-pointer text-lg' 
+                style={{color: "white", left: "170px", top: '4px', fontSize: '24px'}}
+              >
+                {distance}m
+              </div>            
+
+            }
             <ReactMapGL
               ref={mapRef} 
               {...viewport}
@@ -113,37 +112,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
               <NavigationControl position='bottom-right' />
               <FullscreenControl />
 
-
-              {markerList?.map((marker, idx) => {
-                if(marker.visible) return (
-                  <React.Fragment key={marker.markerName}>
-                  <Marker
-                    longitude={marker.longitude}
-                    latitude={marker.latitude}
-                    offsetTop={-20}
-                    offsetLeft={-10}
-                    draggable={true}
-                    color={marker.color}
-                  />
-                  {
-                    marker.reached && 
-                    <Popup
-                      key={marker.markerName}
-                      longitude={marker.longitude}
-                      latitude={marker.latitude}
-                      onClose={() => {popupCloseManager(setMarkerList)}}
-                    >
-                      <div key={marker.markerName}>
-                        <h3>{marker.markerInfo.descriptionTitle}</h3>
-                        <p>{marker.markerInfo.descriptionText}</p>
-                        <button onClick={() => popupCloseManager(setMarkerList)} className="genry">SEE NEXT SIGHTSEEING</button>
-                      </div>
-                    </Popup>
-                  }
-                  </React.Fragment>
-                )
-              })}
-
+              {markerList && <MapMarkers markerList={markerList} setMarkerList={setMarkerList}/>}
               { 
                 showRoutes 
                 && 

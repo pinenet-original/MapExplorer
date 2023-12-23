@@ -1,38 +1,38 @@
-import React from 'react';
-import { popupCloseManager } from "@/utils/helpers";
-import  { Marker,Popup } from "react-map-gl";
+import React, {useEffect} from 'react';
+import  { Marker } from "react-map-gl";
+import { MapReachedMarkerDescriptor } from "@/components/MapReachedMarkerDescriptor"
 
 
-export const MapMarkers = ({markerList, setMarkerList, currentMarker}) => {
+export const MapMarkers = ({markerList, setMarkerList, currentMarker, setShowMap}) => {
+  useEffect(() => {}, [currentMarker])
+
   return (
-    markerList?.map((marker) => {
-      if(marker.visible) return (
-        <React.Fragment key={marker.markerName}>
-        <Marker
-          longitude={marker.longitude}
-          latitude={marker.latitude}
-          offsetTop={-20}
-          offsetLeft={-10}
-          draggable={false}
-          color={marker.color}
-        />
-        {
-          marker.reached && 
-          <Popup
-            key={marker.markerName}
+    <>
+    {
+      currentMarker.reached
+      &&
+      <MapReachedMarkerDescriptor 
+        setMarkerList={setMarkerList} 
+        currentMarker={currentMarker}
+        markerList={markerList}
+        setShowMap={setShowMap}
+      />
+    }
+      {markerList?.map((marker) => {
+        if(marker.visible) return (
+          <React.Fragment key={marker.markerName}>
+          <Marker
             longitude={marker.longitude}
             latitude={marker.latitude}
-            onClose={() => {popupCloseManager(setMarkerList, currentMarker)}}
-          >
-            <div key={marker.markerName}>
-              <h3>{marker.markerInfo.descriptionTitle}</h3>
-              <p>{marker.markerInfo.descriptionText}</p>
-              <button onClick={() => popupCloseManager(setMarkerList, currentMarker)} className="Henry">SEE NEXT SIGHTSEEING</button>
-            </div>
-          </Popup>
-        }
-        </React.Fragment>
-      )
-    })
+            offsetTop={-20}
+            offsetLeft={-10}
+            draggable={false}
+            color={marker.color}
+          />
+          </React.Fragment>
+        )
+      })}
+    </>
+
   );
 }

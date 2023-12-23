@@ -12,7 +12,7 @@ import ReactMapGL, {
   NavigationControl
 } from "react-map-gl";
 
-export const MapComponent = ({selectedRoute, stopRoute}) => {
+export const MapComponent = ({selectedRoute, stopRoute, setShowMap}) => {
   const { currentLocation, error } = useGeolocation();
   const mapRef = useRef();
   const geoControlRef = useRef();
@@ -66,11 +66,15 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
   useEffect(() => {
     if(currentMarker.reached) return
     handleMove();
-  }, [currentLocation, currentMarker, markerList]);
+  }, [currentLocation, currentMarker]);
 
   return (
         <div className='map-container'>
-            <div className='absolute z-50 cursor-pointer text-lg' style={{color: "white", left: "6px", top: '4px', fontSize: '24px'}} onClick={stopRoute}>X</div>
+            <div 
+              className='absolute z-50 cursor-pointer text-lg' 
+              style={{color: "white", left: "6px", top: '4px', fontSize: '24px'}} onClick={stopRoute}>
+              X
+            </div>
             <div 
               className='absolute z-50 cursor-pointer text-lg' 
               style={{color: "white", left: "44px", top: '4px', fontSize: '24px'}} 
@@ -114,7 +118,16 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
               <NavigationControl position='bottom-right' />
               <FullscreenControl />
 
-              {markerList && <MapMarkers markerList={markerList} setMarkerList={setMarkerList} currentMarker={currentMarker} />}
+              {
+                markerList 
+                && 
+                <MapMarkers 
+                  markerList={markerList} 
+                  setMarkerList={setMarkerList} 
+                  currentMarker={currentMarker}
+                  setShowMap={setShowMap} 
+                />
+              }
               { 
                 showRoutes 
                 && 

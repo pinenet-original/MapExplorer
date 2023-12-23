@@ -1,6 +1,7 @@
 import {calculateDistance} from "@/utils/helpers"
+import Image from 'next/image'
 
-export const RouteDescriptor = ({route, currentLocation, setShowMap}) => {
+export const RouteDescriptor = ({route, currentLocation, setShowMap, routeSetter}) => {
 
   const checkDistance = (idx, routeItem) => {
     if (idx === 0) {
@@ -16,15 +17,40 @@ export const RouteDescriptor = ({route, currentLocation, setShowMap}) => {
       <h1 className="text-4xl mb-5">
         {route.routeTitle}
       </h1>
-      <div className="mb-5">
+      <ul className="mb-5 max-w-xs text-left mx-auto">
         {route?.data.map((routeItem, idx) => {
           return (
-            <div key={routeItem.markerName}>{`${idx+1} ) ${routeItem.markerName} - ${checkDistance(idx, routeItem)}m`}</div>
+            <li
+              className="mb-2 flex justify-between"
+              key={routeItem.markerName}
+            >
+              <span>
+                {`${idx+1} ) ${routeItem.markerName} - ${checkDistance(idx, routeItem)}m`}
+              </span>
+              {
+                routeItem.reached
+                &&
+                <span>
+                  <Image src="/check.png" alt="done" width={24} height={24} />
+                </span>
+              }
+            </li>
           )
         })}
+      </ul>
+      <div className="text-center">
+        <button 
+          onClick={() => {setShowMap(prev => !prev)}} 
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-4">
+            Pradeti Marsruta
+        </button>
       </div>
       <div className="text-center">
-        <button onClick={() => {setShowMap(prev => !prev)}} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Pradeti Marsruta</button>
+        <button 
+          onClick={() => {routeSetter()}} 
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+            Atgal i marsruto sarasa
+        </button>
       </div>
     </div>
   );

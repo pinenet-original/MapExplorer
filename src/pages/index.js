@@ -1,10 +1,9 @@
-import { useEffect, useState} from "react";
+import { useState} from "react";
 import {RoutesList} from "@/components/RoutesList"
 import {RouteDescriptor} from "@/components/RouteDescriptor"
-import {MapComponent} from "@/components/MapComponent"
+import {MapComponent} from "@/components/MapComponent";
+import { AppTitle } from "@/components/AppTitle";
 import {useGeolocation} from "@/hooks/UseGeolocation"
-
-
 
 const Home = () => {
   const { currentLocation, error } = useGeolocation();
@@ -14,10 +13,20 @@ const Home = () => {
 
   const routeSelectionManager = () => {
     return (
-        selectedRoute.routeTitle ?
-        <RouteDescriptor route={selectedRoute} currentLocation={currentLocation} setShowMap={setShowMap} />
-        :
-        <RoutesList routeSetter={setSelectedRoute}/>
+      <>
+        <AppTitle/>
+        {
+          selectedRoute?.routeTitle ?
+          <RouteDescriptor 
+            route={selectedRoute} 
+            currentLocation={currentLocation} 
+            setShowMap={setShowMap} 
+            routeSetter={setSelectedRoute} 
+          />
+          :
+          <RoutesList routeSetter={setSelectedRoute}/>
+        }
+      </>
     )
   }
 
@@ -28,11 +37,10 @@ const Home = () => {
 
   return (
     <section className="h-screen ">
-      {!showMap && <h1 className="pt-4 mb-6 text-center text-xl sm:text-2xl md:text-4xl lg:text-6xl">Visaginas Tourism Explorer</h1>}
       {
         showMap
         ? 
-        <MapComponent selectedRoute={selectedRoute} stopRoute={stopRoute} />
+        <MapComponent selectedRoute={selectedRoute} stopRoute={stopRoute} setShowMap={setShowMap} />
         :
         routeSelectionManager()
       }

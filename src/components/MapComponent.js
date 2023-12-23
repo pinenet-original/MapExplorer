@@ -43,7 +43,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
       setDistance(locationToMarkerDistance);
 
       if (locationToMarkerDistance < THRESHOLD) {
-        showReachedMarkerPopup(setMarkerList)
+        showReachedMarkerPopup(setMarkerList, currentMarker)
       }
     }
   };
@@ -65,9 +65,9 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
   }, [markerList])
 
   useEffect(() => {
-    console.log('LOCATION BEEN CHANGED');
+    if(currentMarker.reached) return
     handleMove();
-  }, [currentLocation, currentMarker]);
+  }, [currentLocation, currentMarker, markerList]);
 
   return (
         <div className='map-container'>
@@ -115,7 +115,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
               <NavigationControl position='bottom-right' />
               <FullscreenControl />
 
-              {markerList && <MapMarkers markerList={markerList} setMarkerList={setMarkerList}/>}
+              {markerList && <MapMarkers markerList={markerList} setMarkerList={setMarkerList} currentMarker={currentMarker} />}
               { 
                 showRoutes 
                 && 

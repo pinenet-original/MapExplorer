@@ -14,7 +14,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 
-const showReachedMarkerPopup = (setMarkerList) => {
+const showReachedMarkerPopup = (setMarkerList, currentMarker) => {
   setMarkerList(prev => {
     const temp = [...prev]
     temp[currentMarker.idx].reached = true;
@@ -22,7 +22,7 @@ const showReachedMarkerPopup = (setMarkerList) => {
   })
 }
 
-const popupCloseManager = (setMarkerList) => {
+const popupCloseManager = (setMarkerList, currentMarker) => {
   setMarkerList(prev => {
     const temp = [...prev]
     temp.forEach((marker, idx) => {

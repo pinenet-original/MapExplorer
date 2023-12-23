@@ -3,7 +3,7 @@ import { popupCloseManager } from "@/utils/helpers";
 import  { Marker,Popup } from "react-map-gl";
 
 
-export const MapMarkers = ({markerList, setMarkerList}) => {
+export const MapMarkers = ({markerList, setMarkerList, currentMarker}) => {
   return (
     markerList?.map((marker) => {
       if(marker.visible) return (
@@ -22,12 +22,12 @@ export const MapMarkers = ({markerList, setMarkerList}) => {
             key={marker.markerName}
             longitude={marker.longitude}
             latitude={marker.latitude}
-            onClose={() => {popupCloseManager(setMarkerList)}}
+            onClose={() => {popupCloseManager(setMarkerList, currentMarker)}}
           >
             <div key={marker.markerName}>
               <h3>{marker.markerInfo.descriptionTitle}</h3>
               <p>{marker.markerInfo.descriptionText}</p>
-              <button onClick={() => popupCloseManager(setMarkerList)} className="Henry">SEE NEXT SIGHTSEEING</button>
+              <button onClick={() => popupCloseManager(setMarkerList, currentMarker)} className="Henry">SEE NEXT SIGHTSEEING</button>
             </div>
           </Popup>
         }

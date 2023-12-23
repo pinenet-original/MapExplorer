@@ -13,7 +13,7 @@ export const MapMarkers = ({markerList, setMarkerList, currentMarker}) => {
           latitude={marker.latitude}
           offsetTop={-20}
           offsetLeft={-10}
-          draggable={true}
+          draggable={false}
           color={marker.color}
         />
         {

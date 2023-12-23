@@ -27,9 +27,6 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
   const [currentMarker, setCurrentMarker] = useState({});
   const [showRoutes, setShowRoutes] = useState(false);
   const [distance, setDistance] = useState(null);
-  const [zozo, setZozo] = useState(0);
-
-
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -38,7 +35,6 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
   };
 
   const handleMove = () => {
-    setZozo(prev => prev + 1)
     const isCoords = currentLocation.latitude !== 0 && currentLocation.longitude !== 0 && currentMarker.latitude && currentMarker.longitude
     
     if (isCoords) {
@@ -89,7 +85,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
                 className='absolute z-50 cursor-pointer text-lg' 
                 style={{color: "white", left: "170px", top: '4px', fontSize: '24px'}}
               >
-                {distance}m - {zozo}
+                {distance}m
               </div>            
 
             }

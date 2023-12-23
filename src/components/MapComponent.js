@@ -34,6 +34,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
       geoControlRef.current._onClickGeolocate();
     }
   };
+
   const handleMove = () => {
     const isCoords = currentLocation.latitude !== 0 && currentLocation.longitude !== 0 && currentMarker.latitude && currentMarker.longitude
     
@@ -46,6 +47,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
       }
     }
   };
+
   const onMapLoad = () => {
     console.log('Map fully loaded');
     geoControlRef.current.trigger();
@@ -63,6 +65,7 @@ export const MapComponent = ({selectedRoute, stopRoute}) => {
   }, [markerList])
 
   useEffect(() => {
+    console.log('LOCATION BEEN CHANGED');
     handleMove();
   }, [currentLocation, currentMarker]);
 

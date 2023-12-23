@@ -4,8 +4,8 @@ export const route1 = {
     {
       visible: true,
       markerName: "Church",
-      latitude: 55.605714,
-      longitude: 26.429418,
+      latitude: 55.6038587,
+      longitude: 26.4318844,
       reached: false,
       color: "red",
       markerInfo: {

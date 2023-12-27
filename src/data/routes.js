@@ -4,8 +4,8 @@ export const route1 = {
     {
       visible: true,
       markerName: "Church",
-      latitude: 55.603584,
-      longitude: 26.431949,
+      latitude: 55.598385,
+      longitude: 26.424684,
       reached: false,
       color: "red",
       markerInfo: {
@@ -17,8 +17,8 @@ export const route1 = {
     {
       visible: false,
       markerName: "Chess",
-      latitude: 55.603518,
-      longitude: 26.430635,
+      latitude: 55.597828,
+      longitude: 26.424013,
       reached: false,
       color: "blue",
       markerInfo: {
@@ -30,8 +30,8 @@ export const route1 = {
     {
       visible: false,
       markerName: "Techasas",
-      latitude: 55.604107,
-      longitude: 26.430275,
+      latitude: 55.598154,
+      longitude: 26.423307,
       reached: false,
       color: "green",
       markerInfo: {
@@ -43,8 +43,8 @@ export const route1 = {
     {
       visible: false,
       markerName: "Kebab house",
-      latitude: 55.604986,
-      longitude: 26.429980,
+      latitude: 55.597650,
+      longitude: 26.424401,
       reached: false,
       color: "yellow",
       markerInfo: {

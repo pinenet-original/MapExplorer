@@ -7,7 +7,7 @@ export const AppTitle = () => {
       </h1>
       <iframe 
         style={{margin: "0 auto 30px auto"}} 
-        width="560" 
+        width="340" 
         height="315" 
         src="https://www.youtube.com/embed/ZP2HnzoCUnc?si=mW57fZN3H29gmDj8&amp;start=2" 
         title="YouTube video player" 

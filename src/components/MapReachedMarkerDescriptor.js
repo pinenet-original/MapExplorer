@@ -32,7 +32,7 @@ export const MapReachedMarkerDescriptor = ({setMarkerList, currentMarker, marker
         &&
         <iframe 
         style={{margin: "0 auto 30px auto"}} 
-        width="560" 
+        width="340" 
         height="315" 
         src={currentMarker.markerInfo.video}
         title="YouTube video player" 

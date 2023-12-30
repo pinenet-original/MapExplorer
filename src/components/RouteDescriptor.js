@@ -42,16 +42,16 @@ export const RouteDescriptor = ({route, currentLocation, setShowMap, routeSetter
         <button 
           onClick={() => {setShowMap(prev => !prev)}} 
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-4">
-            Pradeti Marsruta
+            ЗАПУСТИ КАРТУ
         </button>
       </div>
-      <div className="text-center">
+      {/* <div className="text-center">
         <button 
           onClick={() => {routeSetter()}} 
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
             Atgal i marsruto sarasa
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

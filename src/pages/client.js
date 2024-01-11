@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import IndexLayout from "@/layouts/IndexLayout";
+import Link from "next/link";
 
 const client = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -36,7 +37,7 @@ const client = () => {
       try {
         const docSnap = await getDoc(docRef);
         // client wich is loged in web, firebase collection info
-        console.log(11, docSnap.data());
+        // console.log(11, docSnap.data());
       } catch (error) {
         console.log(error);
       }
@@ -79,6 +80,11 @@ const client = () => {
               </button>
             </div>
           </form>
+        </div>
+        <div>
+          <Link href={`/client/${userInfo && userInfo.uid}`}>
+            Link to clients route
+          </Link>
         </div>
       </div>
     </IndexLayout>

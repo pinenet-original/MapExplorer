@@ -1,4 +1,11 @@
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "@/firebase";
 
 export const getClients = async () => {
   const db = getFirestore();
@@ -7,4 +14,12 @@ export const getClients = async () => {
   const clients = clientsSnapshot.docs.map((doc) => doc.data());
   // console.log(clients);
   return clients;
+};
+
+export const getClient = async (id) => {
+  const docRef = doc(db, "clients", id);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+
+  return data;
 };

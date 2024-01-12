@@ -1,5 +1,5 @@
 import { getClient } from "@/utils/dataGetters";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RoutesList } from "@/components/RoutesList";
 import { RouteDescriptor } from "@/components/RouteDescriptor";
 import { MapComponent } from "@/components/MapComponent";
@@ -15,37 +15,43 @@ export default function ClientPage({ clientData }) {
 
   const [selectedRoute, setSelectedRoute] = useState({});
   const [showMap, setShowMap] = useState(false);
-  console.log(clientData);
+  const [showInitScreen, seShowInitScreen] = useState(false);
 
-  // const routeSelectionManager = () => {
-  //   return (
-  //     <>
-  //       <AppTitle />
-  //       {selectedRoute?.routeTitle ? (
-  //         <RouteDescriptor
-  //           route={selectedRoute}
-  //           currentLocation={currentLocation}
-  //           setShowMap={setShowMap}
-  //           routeSetter={setSelectedRoute}
-  //         />
-  //       ) : (
-  //         <RoutesList
-  //           routeSetter={setSelectedRoute}
-  //           routes={clientData.routes}
-  //         />
-  //       )}
-  //     </>
-  //   );
-  // };
+  const routeSelectionManager = () => {
+    return (
+      <>
+        <AppTitle />
+        {selectedRoute?.routeTitle ? (
+          <RouteDescriptor
+            route={selectedRoute}
+            currentLocation={currentLocation}
+            setShowMap={setShowMap}
+            routeSetter={setSelectedRoute}
+          />
+        ) : (
+          <RoutesList
+            routeSetter={setSelectedRoute}
+            routes={clientData.routes}
+          />
+        )}
+      </>
+    );
+  };
 
   const stopRoute = () => {
     setShowMap(false);
     setSelectedRoute([]);
   };
 
+  useEffect(() => {
+    if (clientData) {
+      seShowInitScreen(true);
+    }
+  }, [clientData]);
+
   return (
     <div>
-      {clientData ? (
+      {showInitScreen ? (
         <div>
           <h1>{clientData.name}</h1>
           <section className="h-screen ">
@@ -56,22 +62,7 @@ export default function ClientPage({ clientData }) {
                 setShowMap={setShowMap}
               />
             ) : (
-              <>
-                <AppTitle />
-                {selectedRoute?.routeTitle ? (
-                  <RouteDescriptor
-                    route={selectedRoute}
-                    currentLocation={currentLocation}
-                    setShowMap={setShowMap}
-                    routeSetter={setSelectedRoute}
-                  />
-                ) : (
-                  <RoutesList
-                    routeSetter={setSelectedRoute}
-                    routes={clientData.routes}
-                  />
-                )}
-              </>
+              routeSelectionManager()
             )}
           </section>
         </div>

@@ -4,7 +4,6 @@ export const useGeolocation = () => {
   const [currentLocation, setCurrentLocation] = useState({
     latitude: 0,
     longitude: 0,
-    heading: null,
   });
   const [error, setError] = useState(null);
 
@@ -14,8 +13,8 @@ export const useGeolocation = () => {
     if ("geolocation" in navigator) {
       watchId = navigator.geolocation.watchPosition(
         (position) => {
-          const { longitude, latitude, heading } = position.coords;
-          setCurrentLocation({ longitude, latitude, heading });
+          const { longitude, latitude } = position.coords;
+          setCurrentLocation({ longitude, latitude });
         },
         (error) => {
           console.error("Error getting geolocation:", error);

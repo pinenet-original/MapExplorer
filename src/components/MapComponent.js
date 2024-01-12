@@ -25,7 +25,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
     zoom: 2,
-    bearing: 0,
   });
   const [mapZoom, setMapZoom] = useState(15);
   const [markerList, setMarkerList] = useState(selectedRoute.data);
@@ -82,17 +81,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   useEffect(() => {
     if (currentMarker.reached) return;
     handleMove();
-    console.log(currentLocation);
   }, [currentLocation, currentMarker]);
-
-  useEffect(() => {
-    if (currentLocation.heading !== null) {
-      setViewport((prevViewport) => ({
-        ...prevViewport,
-        bearing: currentLocation.heading,
-      }));
-    }
-  }, [currentLocation.heading]);
 
   return (
     <div className="map-container">
@@ -137,12 +126,12 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         onLoad={onMapLoad}
       >
         <GeolocateControl
-          showAccuracyCircle={false}
+          showAccuracyCircle={true}
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true}
           showUserHeading
           ref={geoControlRef}
-          fitBoundsOptions={{ zoom: 20, pitch: 70 }}
+          fitBoundsOptions={{ zoom: mapZoom }}
           onClick={handleGeolocate}
         />
         <NavigationControl position="bottom-right" />

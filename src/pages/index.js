@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Home = () => {
+  const { t } = useTranslation("common");
   return (
     <div className="w-full h-screen bg-emerald-700">
       <div className="w-96 mx-auto flex justify-between items-center  gap-3 mb-10">
@@ -28,7 +31,7 @@ const Home = () => {
         <h1 className="text-4xl text-white mb-5">
           🌟 Explore Visaginas: Your City Adventure Awaits! 🗺️
         </h1>
-
+        {t("hello")}
         <p className="mb-5">
           Discover the essence of Visaginas through our curated routes. 🚶‍♂️ Let
           the interactive map guide you to iconic landmarks, hidden gems, and
@@ -43,3 +46,9 @@ const Home = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ["common"])),
+  },
+});

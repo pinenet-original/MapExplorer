@@ -5,8 +5,11 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import IndexLayout from "@/layouts/IndexLayout";
 import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const client = () => {
+  const { t } = useTranslation("common");
   const [userInfo, setUserInfo] = useState(null);
   const [route, setRoute] = useState([]);
 
@@ -51,6 +54,7 @@ const client = () => {
       <div className="w-full h-screen flex flex-col items-center  gap-3 bg-emerald-700">
         <div className="mb-16">
           <h1 className="text-3xl">Blank Client page</h1>
+          {t("hello")}
         </div>
         <div>
           <p>Here will be come content for Client</p>
@@ -92,3 +96,9 @@ const client = () => {
 };
 
 export default client;
+
+export const getServerSideProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ["common"])),
+  },
+});

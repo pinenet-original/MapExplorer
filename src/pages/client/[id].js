@@ -17,26 +17,26 @@ export default function ClientPage({ clientData }) {
   const [showMap, setShowMap] = useState(false);
   console.log(clientData);
 
-  const routeSelectionManager = () => {
-    return (
-      <>
-        <AppTitle />
-        {selectedRoute?.routeTitle ? (
-          <RouteDescriptor
-            route={selectedRoute}
-            currentLocation={currentLocation}
-            setShowMap={setShowMap}
-            routeSetter={setSelectedRoute}
-          />
-        ) : (
-          <RoutesList
-            routeSetter={setSelectedRoute}
-            routes={clientData.routes}
-          />
-        )}
-      </>
-    );
-  };
+  // const routeSelectionManager = () => {
+  //   return (
+  //     <>
+  //       <AppTitle />
+  //       {selectedRoute?.routeTitle ? (
+  //         <RouteDescriptor
+  //           route={selectedRoute}
+  //           currentLocation={currentLocation}
+  //           setShowMap={setShowMap}
+  //           routeSetter={setSelectedRoute}
+  //         />
+  //       ) : (
+  //         <RoutesList
+  //           routeSetter={setSelectedRoute}
+  //           routes={clientData.routes}
+  //         />
+  //       )}
+  //     </>
+  //   );
+  // };
 
   const stopRoute = () => {
     setShowMap(false);
@@ -56,7 +56,22 @@ export default function ClientPage({ clientData }) {
                 setShowMap={setShowMap}
               />
             ) : (
-              routeSelectionManager()
+              <>
+                <AppTitle />
+                {selectedRoute?.routeTitle ? (
+                  <RouteDescriptor
+                    route={selectedRoute}
+                    currentLocation={currentLocation}
+                    setShowMap={setShowMap}
+                    routeSetter={setSelectedRoute}
+                  />
+                ) : (
+                  <RoutesList
+                    routeSetter={setSelectedRoute}
+                    routes={clientData.routes}
+                  />
+                )}
+              </>
             )}
           </section>
         </div>

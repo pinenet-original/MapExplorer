@@ -126,12 +126,12 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         onLoad={onMapLoad}
       >
         <GeolocateControl
-          showAccuracyCircle={true}
+          showAccuracyCircle={false}
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true}
           showUserHeading
           ref={geoControlRef}
-          fitBoundsOptions={{ zoom: mapZoom }}
+          fitBoundsOptions={{ zoom: 20, pitch: 70 }}
           onClick={handleGeolocate}
         />
         <NavigationControl position="bottom-right" />

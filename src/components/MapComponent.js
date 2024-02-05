@@ -80,7 +80,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           padding: { top: 400, bottom: 0, left: 0, right: 0 },
         });
         return {
-          ...prevViewport,
           latitude: currentLocation.latitude,
           longitude: currentLocation.longitude,
         };

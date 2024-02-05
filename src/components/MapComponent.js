@@ -21,7 +21,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   const { currentLocation, error } = useGeolocation();
   const mapRef = useRef();
   const geoControlRef = useRef();
-
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
@@ -35,6 +34,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   const [showRoutes, setShowRoutes] = useState(false);
   const [distance, setDistance] = useState(null);
   const [map, setMap] = useState(null);
+  const [test, setTest] = useState(false);
 
   const handleGeolocate = () => {
     if (geoControlRef.current) {
@@ -79,7 +79,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           duration: 2000,
           padding: { top: 400, bottom: 0, left: 0, right: 0 },
         });
-
         return {
           ...prevViewport,
           latitude: currentLocation.latitude,

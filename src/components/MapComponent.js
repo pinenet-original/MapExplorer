@@ -77,12 +77,12 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           zoom: 20,
           pitch: 0,
           duration: 2000,
+          padding: { top: 400, bottom: 0, left: 0, right: 0 },
         });
         return {
           ...prevViewport,
           latitude: currentLocation.latitude,
           longitude: currentLocation.longitude,
-          padding: { top: 400, bottom: 0, left: 0, right: 0 },
         };
       } else {
         mapRef.current.easeTo({

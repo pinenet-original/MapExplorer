@@ -28,7 +28,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     zoom: 2,
     bearing: 0,
     duration: 0,
-    // padding: { top: 600, bottom: 0, left: 0, right: 0 },
   });
   const [mapZoom, setMapZoom] = useState(15);
   const [markerList, setMarkerList] = useState(selectedRoute.data);
@@ -74,27 +73,35 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     setShowRoutes((prevShowRoutes) => !prevShowRoutes);
     setViewport((prevViewport) => {
       if (!showRoutes) {
-        return {
-          ...prevViewport,
+        mapRef.current.easeTo({
           zoom: 20,
           pitch: 0,
-          duration: 5000,
+          duration: 2000,
+        });
+        return {
           latitude: currentLocation.latitude,
           longitude: currentLocation.longitude,
           padding: { top: 400, bottom: 0, left: 0, right: 0 },
         };
       } else {
-        return { ...prevViewport, zoom: 15, pitch: 0 };
+        mapRef.current.easeTo({
+          zoom: 15,
+          pitch: 0,
+          duration: 2000,
+        });
+        return { ...prevViewport };
       }
     });
   };
 
   const NavigateTo = () => {
     if (mapRef.current) {
-      map.panTo([26.432730917247454, 55.60407906787367], { duration: 2000 });
+      map.panTo([26.4434393, 55.5986873], {
+        duration: 2000,
+        zoom: 15,
+      });
     }
   };
-  const test = () => {};
 
   useEffect(() => {
     const curentMarkerIdx = markerList?.findIndex(
@@ -167,19 +174,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         }}
       >
         Navigate To Marker
-      </div>
-      <div
-        onClick={test}
-        className="absolute z-50 text-lg"
-        style={{
-          color: "white",
-          left: "5px",
-          top: "350px",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
-      >
-        Test
       </div>
 
       <ReactMapGL

@@ -13,26 +13,24 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return distance.toFixed(0);
 };
 
-
 const showReachedMarkerPopup = (setMarkerList, currentMarker) => {
-  setMarkerList(prev => {
-    const temp = [...prev]
+  setMarkerList((prev) => {
+    const temp = [...prev];
     temp[currentMarker.idx].reached = true;
-    return temp
-  })
-}
+    return temp;
+  });
+};
 
 const popupCloseManager = (setMarkerList, currentMarker) => {
-  setMarkerList(prev => {
-    const temp = [...prev]
+  setMarkerList((prev) => {
+    const temp = [...prev];
     temp.forEach((marker, idx) => {
-      marker.reached = false
+      marker.reached = false;
       if (idx === currentMarker.idx + 1) marker.visible = true;
-      else marker.visible = false
-    })
-    return temp
-  })
-}
-
+      else marker.visible = false;
+    });
+    return temp;
+  });
+};
 
 export { calculateDistance, showReachedMarkerPopup, popupCloseManager };

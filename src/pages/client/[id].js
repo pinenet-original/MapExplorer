@@ -53,7 +53,6 @@ export default function ClientPage({ clientData }) {
     <div>
       {showInitScreen ? (
         <div>
-          <h1>{clientData.name}</h1>
           <section className="h-screen ">
             {showMap ? (
               <MapComponent

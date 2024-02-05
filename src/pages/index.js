@@ -25,7 +25,7 @@ const Home = () => {
         </p>
       </div>
       <div className="w-96 mx-auto mb-10 flex justify-center">
-        <h1 className="text-7xl max-sm:text-5xl">MapExplorer</h1>
+        <h1 className="text-7xl max-sm:text-5xl">MapExplorer 2</h1>
       </div>
       <div className="w-[900px] px-5 mx-auto flex flex-col items-center text-white">
         <h1 className="text-4xl text-white mb-5">

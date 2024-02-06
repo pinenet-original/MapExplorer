@@ -15,7 +15,6 @@ import ReactMapGL, {
   GeolocateControl,
   NavigationControl,
 } from "react-map-gl";
-import mapboxgl from "mapbox-gl";
 
 export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   const { currentLocation, error } = useGeolocation();
@@ -24,7 +23,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   const [viewport, setViewport] = useState({
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
-    zoom: 2,
+    zoom: 1,
     bearing: 0,
     duration: 0,
   });
@@ -34,11 +33,25 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   const [showRoutes, setShowRoutes] = useState(false);
   const [distance, setDistance] = useState(null);
   const [map, setMap] = useState(null);
-  const [test, setTest] = useState(false);
+  const [navigationPadding, setNavigationPadding] = useState({
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  });
 
-  const handleGeolocate = () => {
+  const zoomToCurrentLocation = () => {
     if (geoControlRef.current) {
-      geoControlRef.current._onClickGeolocate();
+      mapRef.current.easeTo({
+        zoom: 20,
+        pitch: 0,
+        duration: 2000,
+      });
+      geoControlRef.current.trigger();
+      geoControlRef.current.options.fitBoundsOptions.zoom = 20;
+      setNavigationPadding({
+        top: 500,
+      });
     }
   };
 
@@ -69,29 +82,21 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     geoControlRef.current.trigger();
     setMap(mapRef.current.getMap());
   };
+
   const showNavigationManager = () => {
     setShowRoutes((prevShowRoutes) => !prevShowRoutes);
     setViewport((prevViewport) => {
       if (!showRoutes) {
-        mapRef.current.easeTo({
-          zoom: 20,
-          pitch: 0,
-          duration: 2000,
-          padding: { top: 400, bottom: 0, left: 0, right: 0 },
-        });
-        return {
-          ...prevViewport,
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-          zoom: 20,
-        };
+        zoomToCurrentLocation();
       } else {
         mapRef.current.easeTo({
           zoom: 15,
           pitch: 0,
           duration: 2000,
         });
-        return { ...prevViewport };
+        return {
+          ...prevViewport,
+        };
       }
     });
   };
@@ -175,7 +180,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           cursor: "pointer",
         }}
       >
-        Navigate To Marker
+        Move to Marker
       </div>
 
       <ReactMapGL
@@ -190,6 +195,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           handleMove();
         }}
         onLoad={onMapLoad}
+        padding={navigationPadding}
       >
         <GeolocateControl
           showAccuracyCircle={false}
@@ -198,7 +204,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           showUserHeading
           fitBoundsOptions={{ zoom: mapZoom }}
           ref={geoControlRef}
-          onClick={handleGeolocate}
         />
         <NavigationControl position="bottom-right" />
         <FullscreenControl />

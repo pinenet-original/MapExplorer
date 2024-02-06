@@ -52,7 +52,7 @@ export const MapRouteBuilder = ({
       setCoords(route.geometry.coordinates);
       setSteps(route.legs[0].steps.map((step) => step.maneuver.instruction));
       setDistanceToNextStep(route.legs[0].steps[0].distance);
-      console.log(route.legs[0].steps[0]);
+      // console.log(route.legs[0].steps[0]);
     } catch (error) {
       console.error("Error fetching route data:", error);
     }

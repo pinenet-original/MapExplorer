@@ -4,9 +4,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Home = () => {
   const { t } = useTranslation("common");
+
   return (
     <div className="w-full h-screen bg-emerald-700">
-      <div className="w-96 mx-auto flex justify-between items-center  gap-3 mb-10">
+      <div className="max:w-96 mx-auto flex justify-between items-center  gap-3 mb-10">
         <p>
           <Link
             href="/login"
@@ -24,10 +25,10 @@ const Home = () => {
           </Link>
         </p>
       </div>
-      <div className="w-96 mx-auto mb-10 flex justify-center">
+      <div className="max:w-96 mx-auto mb-10 flex justify-center">
         <h1 className="text-7xl max-sm:text-5xl">MapExplorer 2</h1>
       </div>
-      <div className="w-[900px] px-5 mx-auto flex flex-col items-center text-white">
+      <div className="max:w-[900px]  px-5 mx-auto flex flex-col items-center text-white">
         <h1 className="text-4xl text-white mb-5">
           🌟 Explore Visaginas: Your City Adventure Awaits! 🗺️
         </h1>

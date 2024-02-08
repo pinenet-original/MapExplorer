@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-const Instruction = ({ instruction }) => {
-  useEffect(() => {}, [instruction]);
-
+const Instruction = ({ instruction, distanceToNewManeuver }) => {
   return (
     <div style={{ margin: "10px 0", fontSize: "18px" }}>
-      <strong>Step:</strong> {instruction}
+      <p>Step: {instruction}</p>
+      <p>Distance to new maneuver: {distanceToNewManeuver}m.</p>
     </div>
   );
 };

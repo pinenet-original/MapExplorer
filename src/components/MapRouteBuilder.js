@@ -4,6 +4,7 @@ import { STEPS_THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
+import { ST } from "next/dist/shared/lib/utils";
 
 export const MapRouteBuilder = ({
   showRoutes,
@@ -12,10 +13,10 @@ export const MapRouteBuilder = ({
 }) => {
   const [coords, setCoords] = useState([]);
   const [steps, setSteps] = useState([]);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [distanceToNextStep, setDistanceToNextStep] = useState([]);
   const [xyz, setXyz] = useState(0);
-  const [maneuverLocation, setManeuverLocation] = useState("");
+  const [maneuverStepLocation, setManeuverStepLocation] = useState();
+  const [distanceToNewManeuver, setDistanceToNewManeuver] = useState(0);
 
   const startPoint = {
     type: "FeatureCollection",
@@ -52,11 +53,39 @@ export const MapRouteBuilder = ({
 
       setCoords(route.geometry.coordinates);
       setSteps(route.legs[0].steps.map((step) => step.maneuver.instruction));
-      setManeuverLocation(route.legs[0].steps[0].maneuver.location);
-      setDistanceToNextStep(route.legs[0].steps[0].distance);
-      console.log(route.legs);
+      setManeuverStepLocation(
+        route.legs[0].steps.map((step) => step.maneuver.location)
+      );
     } catch (error) {
       console.error("Error fetching route data:", error);
+    }
+  };
+
+  const nextStepManager = () => {
+    const isCoords =
+      currentLocation.latitude !== 0 &&
+      currentLocation.longitude !== 0 &&
+      currentMarker.latitude &&
+      currentMarker.longitude &&
+      coords.length > 0;
+
+    if (isCoords) {
+      const locatioToNextStepDistance = calculateDistance(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        maneuverStepLocation[0][1],
+        maneuverStepLocation[0][0]
+      );
+      setDistanceToNewManeuver(locatioToNextStepDistance);
+
+      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
+        setSteps((prev) => {
+          return [...prev].splice(1);
+        });
+        setManeuverStepLocation((prev) => {
+          return [...prev].splice(1);
+        });
+      }
     }
   };
 
@@ -85,6 +114,7 @@ export const MapRouteBuilder = ({
   };
 
   useEffect(() => {
+    nextStepManager();
     getRoute();
   }, [showRoutes]);
 
@@ -95,23 +125,6 @@ export const MapRouteBuilder = ({
 
       // Update start coordinates with user's current location
       setStart(userLocation);
-
-      // Use the latest steps state
-      const currentStep = steps[currentStepIndex];
-
-      const distanceToNextStep = calculateDistance(
-        userLocation,
-        currentStep.location.coordinates
-      );
-
-      setDistanceToNextStep(distanceToNextStep);
-
-      // Adjust the threshold for step completion to 10 meters
-      if (distanceToNextStep < 10) {
-        setCurrentStepIndex((prevIndex) =>
-          Math.min(prevIndex + 1, steps.length - 1)
-        );
-      }
     };
 
     GeolocateControl.current?.on("geolocate", onGeolocate);
@@ -119,7 +132,7 @@ export const MapRouteBuilder = ({
     return () => {
       GeolocateControl.current?.off("geolocate", onGeolocate);
     };
-  }, [currentStepIndex, steps]);
+  }, [steps, distanceToNextStep, distanceToNewManeuver]);
 
   return (
     <>
@@ -133,9 +146,11 @@ export const MapRouteBuilder = ({
         }}
       >
         {steps.length > 0 && (
-          <Instruction instruction={steps[currentStepIndex]} />
+          <Instruction
+            instruction={steps[0]}
+            distanceToNewManeuver={distanceToNewManeuver}
+          />
         )}
-        To next step: {distanceToNextStep}m
       </div>
       <Source id="routeSource" type="geojson" data={startPoint}>
         <Layer {...lineStyle} />

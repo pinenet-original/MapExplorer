@@ -1,2 +1,2 @@
-export const THRESHOLD = 20;
+export const THRESHOLD = 25;
 export const STEPS_THRESHOLD = 5;

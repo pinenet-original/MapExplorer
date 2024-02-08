@@ -4,7 +4,6 @@ import { STEPS_THRESHOLD, THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
-import next from "next";
 
 export const MapRouteBuilder = ({
   showRoutes,
@@ -115,13 +114,7 @@ export const MapRouteBuilder = ({
   useEffect(() => {
     getRoute();
     nextStepManager();
-  }, [
-    showRoutes,
-    currentLocation,
-    steps,
-    currentMarker,
-    distanceToNewManeuver,
-  ]);
+  }, [steps, distanceToNewManeuver]);
 
   // useEffect(() => {
   //   const onGeolocate = (e) => {

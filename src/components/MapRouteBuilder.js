@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { lineStyle } from "@/utils/geoJsonData";
-import { STEPS_THRESHOLD } from "@/data/constantas";
+import { STEPS_THRESHOLD, THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";

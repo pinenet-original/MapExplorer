@@ -4,6 +4,7 @@ import { STEPS_THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
+import next from "next";
 
 export const MapRouteBuilder = ({
   showRoutes,
@@ -59,7 +60,33 @@ export const MapRouteBuilder = ({
     }
   };
 
-  const nextStepManager = () => {};
+  const nextStepManager = () => {
+    const isCoords =
+      currentLocation.latitude !== 0 &&
+      currentLocation.longitude !== 0 &&
+      currentMarker.latitude &&
+      currentMarker.longitude &&
+      coords.length > 0;
+
+    if (isCoords) {
+      const locatioToNextStepDistance = calculateDistance(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        maneuverStepLocation[0][1],
+        maneuverStepLocation[0][0]
+      );
+      setDistanceToNewManeuver(locatioToNextStepDistance);
+
+      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
+        setSteps((prev) => {
+          return [...prev].splice(1);
+        });
+        setManeuverStepLocation((prev) => {
+          return [...prev].splice(1);
+        });
+      }
+    }
+  };
 
   const blueLineUpdateManager = () => {
     const isCoords =
@@ -87,48 +114,30 @@ export const MapRouteBuilder = ({
 
   useEffect(() => {
     getRoute();
-  }, [showRoutes]);
+    nextStepManager();
+  }, [
+    showRoutes,
+    currentLocation,
+    steps,
+    currentMarker,
+    distanceToNewManeuver,
+  ]);
 
-  useEffect(() => {
-    const onGeolocate = (e) => {
-      const userLocation = [e.coords.longitude, e.coords.latitude];
-      const { longitude, latitude } = e.coords;
+  // useEffect(() => {
+  //   const onGeolocate = (e) => {
+  //     const userLocation = [e.coords.longitude, e.coords.latitude];
+  //     const { longitude, latitude } = e.coords;
 
-      // Update start coordinates with user's current location
-      setStart(userLocation);
-    };
-    const isCoords =
-      currentLocation.latitude !== 0 &&
-      currentLocation.longitude !== 0 &&
-      currentMarker.latitude &&
-      currentMarker.longitude &&
-      coords.length > 0;
+  //     // Update start coordinates with user's current location
+  //     setStart(userLocation);
+  //   };
 
-    if (isCoords) {
-      const locatioToNextStepDistance = calculateDistance(
-        currentLocation.latitude,
-        currentLocation.longitude,
-        maneuverStepLocation[0][1],
-        maneuverStepLocation[0][0]
-      );
-      setDistanceToNewManeuver(locatioToNextStepDistance);
+  //   GeolocateControl.current?.on("geolocate", onGeolocate);
 
-      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
-        setSteps((prev) => {
-          return [...prev].splice(1);
-        });
-        setManeuverStepLocation((prev) => {
-          return [...prev].splice(1);
-        });
-      }
-    }
-
-    GeolocateControl.current?.on("geolocate", onGeolocate);
-
-    return () => {
-      GeolocateControl.current?.off("geolocate", onGeolocate);
-    };
-  }, [steps, distanceToNextStep, distanceToNewManeuver]);
+  //   return () => {
+  //     GeolocateControl.current?.off("geolocate", onGeolocate);
+  //   };
+  // }, [steps, distanceToNextStep, distanceToNewManeuver]);
 
   return (
     <>

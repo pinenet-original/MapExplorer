@@ -2,9 +2,11 @@ import React from "react";
 
 const Instruction = ({ instruction, distanceToNewManeuver }) => {
   return (
-    <div style={{ margin: "10px 0", fontSize: "18px" }}>
+    <div className="m-y-2" style={{ fontSize: "18px" }}>
       <p>Step: {instruction}</p>
-      <p>Distance to new maneuver: {distanceToNewManeuver}m.</p>
+      <p className="text-red-600">
+        Distance to new maneuver: {distanceToNewManeuver}m.
+      </p>
     </div>
   );
 };

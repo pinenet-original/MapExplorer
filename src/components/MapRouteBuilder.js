@@ -4,7 +4,6 @@ import { STEPS_THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
-import { ST } from "next/dist/shared/lib/utils";
 
 export const MapRouteBuilder = ({
   showRoutes,
@@ -17,7 +16,6 @@ export const MapRouteBuilder = ({
   const [xyz, setXyz] = useState(0);
   const [maneuverStepLocation, setManeuverStepLocation] = useState();
   const [distanceToNewManeuver, setDistanceToNewManeuver] = useState(0);
-
   const startPoint = {
     type: "FeatureCollection",
     features: [
@@ -61,33 +59,7 @@ export const MapRouteBuilder = ({
     }
   };
 
-  const nextStepManager = () => {
-    const isCoords =
-      currentLocation.latitude !== 0 &&
-      currentLocation.longitude !== 0 &&
-      currentMarker.latitude &&
-      currentMarker.longitude &&
-      coords.length > 0;
-
-    if (isCoords) {
-      const locatioToNextStepDistance = calculateDistance(
-        currentLocation.latitude,
-        currentLocation.longitude,
-        maneuverStepLocation[0][1],
-        maneuverStepLocation[0][0]
-      );
-      setDistanceToNewManeuver(locatioToNextStepDistance);
-
-      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
-        setSteps((prev) => {
-          return [...prev].splice(1);
-        });
-        setManeuverStepLocation((prev) => {
-          return [...prev].splice(1);
-        });
-      }
-    }
-  };
+  const nextStepManager = () => {};
 
   const blueLineUpdateManager = () => {
     const isCoords =
@@ -114,7 +86,6 @@ export const MapRouteBuilder = ({
   };
 
   useEffect(() => {
-    nextStepManager();
     getRoute();
   }, [showRoutes]);
 
@@ -126,6 +97,31 @@ export const MapRouteBuilder = ({
       // Update start coordinates with user's current location
       setStart(userLocation);
     };
+    const isCoords =
+      currentLocation.latitude !== 0 &&
+      currentLocation.longitude !== 0 &&
+      currentMarker.latitude &&
+      currentMarker.longitude &&
+      coords.length > 0;
+
+    if (isCoords) {
+      const locatioToNextStepDistance = calculateDistance(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        maneuverStepLocation[0][1],
+        maneuverStepLocation[0][0]
+      );
+      setDistanceToNewManeuver(locatioToNextStepDistance);
+
+      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
+        setSteps((prev) => {
+          return [...prev].splice(1);
+        });
+        setManeuverStepLocation((prev) => {
+          return [...prev].splice(1);
+        });
+      }
+    }
 
     GeolocateControl.current?.on("geolocate", onGeolocate);
 

@@ -15,6 +15,7 @@ export const MapRouteBuilder = ({
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [distanceToNextStep, setDistanceToNextStep] = useState([]);
   const [xyz, setXyz] = useState(0);
+  const [maneuverLocation, setManeuverLocation] = useState("");
 
   const startPoint = {
     type: "FeatureCollection",
@@ -51,8 +52,9 @@ export const MapRouteBuilder = ({
 
       setCoords(route.geometry.coordinates);
       setSteps(route.legs[0].steps.map((step) => step.maneuver.instruction));
+      setManeuverLocation(route.legs[0].steps[0].maneuver.location);
       setDistanceToNextStep(route.legs[0].steps[0].distance);
-      // console.log(route.legs[0].steps[0]);
+      console.log(route.legs);
     } catch (error) {
       console.error("Error fetching route data:", error);
     }
@@ -133,6 +135,7 @@ export const MapRouteBuilder = ({
         {steps.length > 0 && (
           <Instruction instruction={steps[currentStepIndex]} />
         )}
+        To next step: {distanceToNextStep}m
       </div>
       <Source id="routeSource" type="geojson" data={startPoint}>
         <Layer {...lineStyle} />

@@ -4,11 +4,13 @@ import { STEPS_THRESHOLD, THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
+import next from "next";
 
 export const MapRouteBuilder = ({
   showRoutes,
   currentLocation,
   currentMarker,
+  setBearing,
 }) => {
   const [coords, setCoords] = useState([]);
   const [steps, setSteps] = useState([]);
@@ -54,6 +56,7 @@ export const MapRouteBuilder = ({
       setManeuverStepLocation(
         route.legs[0].steps.map((step) => step.maneuver.location)
       );
+      console.log(route.legs);
     } catch (error) {
       console.error("Error fetching route data:", error);
     }
@@ -113,24 +116,27 @@ export const MapRouteBuilder = ({
 
   useEffect(() => {
     getRoute();
+  }, []);
+
+  useEffect(() => {
     nextStepManager();
-  }, [steps, distanceToNewManeuver]);
+  }, [steps, distanceToNextStep]);
 
-  // useEffect(() => {
-  //   const onGeolocate = (e) => {
-  //     const userLocation = [e.coords.longitude, e.coords.latitude];
-  //     const { longitude, latitude } = e.coords;
+  useEffect(() => {
+    const onGeolocate = (e) => {
+      const userLocation = [e.coords.longitude, e.coords.latitude];
+      const { longitude, latitude } = e.coords;
 
-  //     // Update start coordinates with user's current location
-  //     setStart(userLocation);
-  //   };
+      // Update start coordinates with user's current location
+      setStart(userLocation);
+    };
 
-  //   GeolocateControl.current?.on("geolocate", onGeolocate);
+    GeolocateControl.current?.on("geolocate", onGeolocate);
 
-  //   return () => {
-  //     GeolocateControl.current?.off("geolocate", onGeolocate);
-  //   };
-  // }, [steps, distanceToNextStep, distanceToNewManeuver]);
+    return () => {
+      GeolocateControl.current?.off("geolocate", onGeolocate);
+    };
+  }, [currentLocation, currentMarker]);
 
   return (
     <>

@@ -35,10 +35,8 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   const [map, setMap] = useState(null);
   const [navigationPadding, setNavigationPadding] = useState({
     top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   });
+  const [bearing, setBearing] = useState(0);
 
   const zoomToCurrentLocation = () => {
     if (geoControlRef.current) {
@@ -219,6 +217,8 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
 
         {showRoutes && (
           <MapRouteBuilder
+            // need to pass setBearing to MapRouteBuilder component to update bearing state in MapRouteBuilder component and later use it to update the map bearing
+            setBearing={setBearing}
             setShowRoutes={setShowRoutes}
             showRoutes={showRoutes}
             currentLocation={currentLocation}

@@ -77,7 +77,7 @@ export const MapRouteBuilder = ({
       );
       setDistanceToNewManeuver(locatioToNextStepDistance);
 
-      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
+      if (locatioToNextStepDistance <= THRESHOLD) {
         setSteps((prev) => {
           return [...prev].splice(1);
         });

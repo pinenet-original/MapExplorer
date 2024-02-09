@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import { useGeolocation } from "@/hooks/UseGeolocation";
 import "mapbox-gl/dist/mapbox-gl.css";
 import {
@@ -24,7 +24,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     longitude: 26.432730917247454,
     latitude: 55.60407906787367,
     zoom: 1,
-    bearing: 0,
     duration: 0,
   });
   const [mapZoom, setMapZoom] = useState(15);
@@ -37,7 +36,16 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     top: 0,
   });
   const [bearing, setBearing] = useState(0);
-  console.log(bearing, "bearing");
+  console.log(bearing[0]);
+
+  const changeBearing = () => {
+    if (bearing) {
+      mapRef.current.easeTo({
+        bearing: bearing[0],
+        duration: 2000,
+      });
+    }
+  };
 
   const zoomToCurrentLocation = () => {
     if (geoControlRef.current) {
@@ -110,6 +118,12 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
   };
 
   useEffect(() => {
+    if (bearing) {
+      changeBearing();
+    }
+  }, [bearing]);
+
+  useEffect(() => {
     const curentMarkerIdx = markerList?.findIndex(
       (obj) => obj.visible === true
     );
@@ -180,6 +194,19 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         }}
       >
         Move to Marker
+      </div>
+      <div
+        onClick={changeBearing}
+        className="absolute z-50 text-lg"
+        style={{
+          color: "white",
+          left: "5px",
+          top: "420px",
+          fontSize: "24px",
+          cursor: "pointer",
+        }}
+      >
+        change Bearing
       </div>
 
       <ReactMapGL

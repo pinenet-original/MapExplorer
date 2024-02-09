@@ -56,7 +56,9 @@ export const MapRouteBuilder = ({
       setManeuverStepLocation(
         route.legs[0].steps.map((step) => step.maneuver.location)
       );
-      console.log(route.legs);
+      setBearing(
+        route.legs[0].steps.map((step) => step.maneuver.bearing_after)
+      );
     } catch (error) {
       console.error("Error fetching route data:", error);
     }
@@ -84,6 +86,9 @@ export const MapRouteBuilder = ({
           return [...prev].splice(1);
         });
         setManeuverStepLocation((prev) => {
+          return [...prev].splice(1);
+        });
+        setBearing((prev) => {
           return [...prev].splice(1);
         });
       }

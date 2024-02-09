@@ -37,6 +37,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     top: 0,
   });
   const [bearing, setBearing] = useState(0);
+  console.log(bearing, "bearing");
 
   const zoomToCurrentLocation = () => {
     if (geoControlRef.current) {

@@ -114,13 +114,17 @@ export const MapRouteBuilder = ({
     }
   };
 
+  const updateBearing = () => {
+    setBearing(10);
+  };
+
   useEffect(() => {
     getRoute();
   }, [showRoutes]);
 
   useEffect(() => {
     nextStepManager();
-  }, [distanceToNewManeuver, steps]);
+  }, [, steps]);
 
   useEffect(() => {
     const onGeolocate = (e) => {
@@ -136,7 +140,7 @@ export const MapRouteBuilder = ({
     return () => {
       GeolocateControl.current?.off("geolocate", onGeolocate);
     };
-  }, [currentLocation, currentMarker]);
+  }, [currentLocation, currentMarker, distanceToNewManeuver]);
 
   return (
     <>
@@ -149,6 +153,7 @@ export const MapRouteBuilder = ({
           fontSize: "24px",
         }}
       >
+        <button onClick={updateBearing}>Set Bearing</button>
         {steps.length > 0 && (
           <Instruction
             instruction={steps[0]}

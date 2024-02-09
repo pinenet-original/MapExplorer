@@ -195,19 +195,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
       >
         Move to Marker
       </div>
-      <div
-        onClick={changeBearing}
-        className="absolute z-50 text-lg"
-        style={{
-          color: "white",
-          left: "5px",
-          top: "420px",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
-      >
-        change Bearing
-      </div>
 
       <ReactMapGL
         ref={mapRef}

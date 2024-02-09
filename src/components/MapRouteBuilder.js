@@ -124,7 +124,13 @@ export const MapRouteBuilder = ({
 
   useEffect(() => {
     nextStepManager();
-  }, [, steps]);
+  }, [
+    distanceToNewManeuver,
+    steps,
+    maneuverStepLocation,
+    currentLocation,
+    currentMarker,
+  ]);
 
   useEffect(() => {
     const onGeolocate = (e) => {
@@ -140,7 +146,7 @@ export const MapRouteBuilder = ({
     return () => {
       GeolocateControl.current?.off("geolocate", onGeolocate);
     };
-  }, [currentLocation, currentMarker, distanceToNewManeuver]);
+  }, [currentLocation, currentMarker, distanceToNewManeuver, steps]);
 
   return (
     <>

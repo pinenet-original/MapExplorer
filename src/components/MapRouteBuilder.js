@@ -116,11 +116,11 @@ export const MapRouteBuilder = ({
 
   useEffect(() => {
     getRoute();
-  }, []);
+  }, [showRoutes]);
 
   useEffect(() => {
     nextStepManager();
-  }, [steps, distanceToNextStep]);
+  }, [distanceToNewManeuver, steps]);
 
   useEffect(() => {
     const onGeolocate = (e) => {

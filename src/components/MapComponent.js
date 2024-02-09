@@ -36,7 +36,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     top: 0,
   });
   const [bearing, setBearing] = useState(0);
-  console.log(mapRef.current);
 
   const changeBearing = () => {
     if (bearing) {

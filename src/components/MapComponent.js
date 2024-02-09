@@ -36,7 +36,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     top: 0,
   });
   const [bearing, setBearing] = useState(0);
-  console.log(bearing[0]);
 
   const changeBearing = () => {
     if (bearing) {
@@ -195,6 +194,19 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
       >
         Move to Marker
       </div>
+      <div
+        onClick={changeBearing}
+        className="absolute z-50 text-lg"
+        style={{
+          color: "white",
+          left: "5px",
+          top: "420px",
+          fontSize: "24px",
+          cursor: "pointer",
+        }}
+      >
+        Move to Marker
+      </div>
 
       <ReactMapGL
         ref={mapRef}
@@ -232,7 +244,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
 
         {showRoutes && (
           <MapRouteBuilder
-            // need to pass setBearing to MapRouteBuilder component to update bearing state in MapRouteBuilder component and later use it to update the map bearing
             setBearing={setBearing}
             setShowRoutes={setShowRoutes}
             showRoutes={showRoutes}

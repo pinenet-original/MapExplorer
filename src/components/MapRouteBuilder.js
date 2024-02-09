@@ -4,7 +4,6 @@ import { STEPS_THRESHOLD, THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
-import next from "next";
 
 export const MapRouteBuilder = ({
   showRoutes,
@@ -120,7 +119,7 @@ export const MapRouteBuilder = ({
   };
 
   const updateBearing = () => {
-    setBearing(10);
+    setBearing(100 + 30);
   };
 
   useEffect(() => {
@@ -164,7 +163,6 @@ export const MapRouteBuilder = ({
           fontSize: "24px",
         }}
       >
-        <button onClick={updateBearing}>Set Bearing</button>
         {steps.length > 0 && (
           <Instruction
             instruction={steps[0]}

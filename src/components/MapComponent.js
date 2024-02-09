@@ -39,13 +39,19 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
 
   const changeBearing = () => {
     if (bearing) {
-      mapRef.current.easeTo(2000);
-      mapRef.current.setBearing(bearing[0]);
-      geoControlRef.current.trigger();
+      mapRef.current.easeTo({
+        bearing: bearing[0],
+        duration: 2000,
+        zoom: 20,
+      });
     }
+    // if (bearing) {
+    //   mapRef.current.easeTo({ duration: 2000, bearing: bearing[0] });
+    //   mapRef.current.setBearing(bearing[0]);
+    //   geoControlRef.current.trigger();
+    // }
   };
-
-  const zoomToCurrentLocation = () => {
+  const navigationMode = () => {
     if (geoControlRef.current) {
       mapRef.current.easeTo({
         zoom: 20,
@@ -92,13 +98,14 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     setShowRoutes((prevShowRoutes) => !prevShowRoutes);
     setViewport((prevViewport) => {
       if (!showRoutes) {
-        zoomToCurrentLocation();
+        navigationMode();
       } else {
         mapRef.current.easeTo({
           zoom: 15,
           pitch: 0,
           duration: 2000,
         });
+        geoControlRef.current.options.fitBoundsOptions.zoom = 15;
         return {
           ...prevViewport,
         };

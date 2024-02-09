@@ -40,7 +40,7 @@ export const MapRouteBuilder = ({
           ","
         )}?steps=true&walkway_bias=1&geometries=geojson&access_token=${
           process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-        }`
+        }&language=ru`
       );
 
       if (!response.ok) {
@@ -118,10 +118,6 @@ export const MapRouteBuilder = ({
     }
   };
 
-  const updateBearing = () => {
-    setBearing(100 + 30);
-  };
-
   useEffect(() => {
     getRoute();
   }, [showRoutes]);
@@ -170,6 +166,7 @@ export const MapRouteBuilder = ({
           />
         )}
       </div>
+
       <Source id="routeSource" type="geojson" data={startPoint}>
         <Layer {...lineStyle} />
       </Source>

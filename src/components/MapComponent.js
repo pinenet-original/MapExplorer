@@ -36,13 +36,13 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
     top: 0,
   });
   const [bearing, setBearing] = useState(0);
+  console.log(mapRef.current);
 
   const changeBearing = () => {
     if (bearing) {
-      mapRef.current.easeTo({
-        bearing: bearing[0],
-        duration: 2000,
-      });
+      mapRef.current.easeTo(2000);
+      mapRef.current.setBearing(bearing[0]);
+      geoControlRef.current.trigger();
     }
   };
 
@@ -181,7 +181,7 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           </div>
         </>
       )}
-      <div
+      {/* <div
         onClick={NavigateTo}
         className="absolute z-50 text-lg"
         style={{
@@ -193,20 +193,20 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         }}
       >
         Move to Marker
-      </div>
-      <div
+      </div> */}
+      {/* <div
         onClick={changeBearing}
         className="absolute z-50 text-lg"
         style={{
           color: "white",
           left: "5px",
-          top: "420px",
+          top: "320px",
           fontSize: "24px",
           cursor: "pointer",
         }}
       >
-        Move to Marker
-      </div>
+        Change Bearing
+      </div> */}
 
       <ReactMapGL
         ref={mapRef}

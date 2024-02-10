@@ -44,6 +44,10 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         duration: 2000,
         zoom: 20,
       });
+
+      setTimeout(() => {
+        geoControlRef.current.trigger();
+      }, 3000);
     }
     // if (bearing) {
     //   mapRef.current.easeTo({ duration: 2000, bearing: bearing[0] });
@@ -218,7 +222,8 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         ref={mapRef}
         {...viewport}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-        mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
+        // mapStyle="mapbox://styles/marius-dainys/clp87nlcx01tq01o4hv8ybcc1"
+        mapStyle="mapbox://styles/mapbox/dark-v11"
         attributionControl={false}
         onMove={(e) => setViewport(e.viewport)}
         onViewportChange={(newViewport) => {

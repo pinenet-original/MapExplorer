@@ -7,8 +7,8 @@ export const lineStyle = {
     "line-cap": "round",
   },
   paint: {
-    "line-color": "blue",
-    "line-width": 4,
-    "line-opacity": 0.75,
+    "line-color": "rgb(255,255,255)",
+    "line-width": 8,
+    "line-opacity": 0.4,
   },
 };

@@ -4,6 +4,7 @@ import { STEPS_THRESHOLD, THRESHOLD } from "@/data/constantas";
 import { Layer, Source, GeolocateControl } from "react-map-gl";
 import { calculateDistance } from "@/utils/helpers";
 import Instruction from "./Instruction";
+import { directionApiUrlMaker } from "@/utils/helpers";
 
 export const MapRouteBuilder = ({
   showRoutes,
@@ -31,16 +32,21 @@ export const MapRouteBuilder = ({
   };
 
   const getRoute = async () => {
+    const myLon = currentLocation.longitude;
+    const myLat = currentLocation.latitude;
+
+    const curMarkerLon = currentMarker.longitude;
+    const curMakerLat = currentMarker.latitude;
     try {
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/walking/${[
-          currentLocation.longitude,
-          currentLocation.latitude,
-        ].join(",")};${[currentMarker.longitude, currentMarker.latitude].join(
-          ","
-        )}?steps=true&walkway_bias=1&geometries=geojson&access_token=${
-          process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-        }&language=ru`
+        directionApiUrlMaker(
+          myLon,
+          myLat,
+          curMarkerLon,
+          curMakerLat,
+          process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
+          "ru"
+        )
       );
 
       if (!response.ok) {
@@ -72,15 +78,15 @@ export const MapRouteBuilder = ({
       coords.length > 0;
 
     if (isCoords) {
-      const locatioToNextStepDistance = calculateDistance(
+      const locationToNextStepDistance = calculateDistance(
         currentLocation.latitude,
         currentLocation.longitude,
         maneuverStepLocation[0][1],
         maneuverStepLocation[0][0]
       );
-      setDistanceToNewManeuver(locatioToNextStepDistance);
+      setDistanceToNewManeuver(locationToNextStepDistance);
 
-      if (locatioToNextStepDistance <= THRESHOLD) {
+      if (locationToNextStepDistance <= THRESHOLD) {
         setSteps((prev) => {
           return [...prev].splice(1);
         });
@@ -102,15 +108,15 @@ export const MapRouteBuilder = ({
       currentMarker.longitude &&
       coords.length > 0;
     if (isCoords) {
-      const locatioToNextStepDistance = calculateDistance(
+      const locationToNextStepDistance = calculateDistance(
         currentLocation.latitude,
         currentLocation.longitude,
         coords[1][1],
         coords[1][0]
       );
-      setXyz(locatioToNextStepDistance);
+      setXyz(locationToNextStepDistance);
 
-      if (locatioToNextStepDistance <= STEPS_THRESHOLD) {
+      if (locationToNextStepDistance <= STEPS_THRESHOLD) {
         setCoords((prev) => {
           return [...prev].splice(1);
         });

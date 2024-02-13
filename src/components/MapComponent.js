@@ -49,11 +49,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         geoControlRef.current.trigger();
       }, 3000);
     }
-    // if (bearing) {
-    //   mapRef.current.easeTo({ duration: 2000, bearing: bearing[0] });
-    //   mapRef.current.setBearing(bearing[0]);
-    //   geoControlRef.current.trigger();
-    // }
   };
   const navigationMode = () => {
     if (geoControlRef.current) {
@@ -115,15 +110,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
         };
       }
     });
-  };
-
-  const NavigateTo = () => {
-    if (mapRef.current) {
-      map.panTo([26.4434393, 55.5986873], {
-        duration: 2000,
-        zoom: 15,
-      });
-    }
   };
 
   useEffect(() => {
@@ -191,32 +177,6 @@ export const MapComponent = ({ selectedRoute, stopRoute, setShowMap }) => {
           </div>
         </>
       )}
-      {/* <div
-        onClick={NavigateTo}
-        className="absolute z-50 text-lg"
-        style={{
-          color: "white",
-          left: "5px",
-          top: "320px",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
-      >
-        Move to Marker
-      </div> */}
-      {/* <div
-        onClick={changeBearing}
-        className="absolute z-50 text-lg"
-        style={{
-          color: "white",
-          left: "5px",
-          top: "320px",
-          fontSize: "24px",
-          cursor: "pointer",
-        }}
-      >
-        Change Bearing
-      </div> */}
 
       <ReactMapGL
         ref={mapRef}

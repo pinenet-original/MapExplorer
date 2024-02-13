@@ -14,7 +14,6 @@ export const MapRouteBuilder = ({
 }) => {
   const [coords, setCoords] = useState([]);
   const [steps, setSteps] = useState([]);
-  const [distanceToNextStep, setDistanceToNextStep] = useState([]);
   const [xyz, setXyz] = useState(0);
   const [maneuverStepLocation, setManeuverStepLocation] = useState();
   const [distanceToNewManeuver, setDistanceToNewManeuver] = useState(0);
@@ -123,6 +122,10 @@ export const MapRouteBuilder = ({
       }
     }
   };
+
+  useEffect(() => {
+    blueLineUpdateManager();
+  }, [currentLocation, currentMarker, coords]);
 
   useEffect(() => {
     getRoute();

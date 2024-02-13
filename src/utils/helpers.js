@@ -41,7 +41,7 @@ const directionApiUrlMaker = (
   apiKey,
   lang
 ) => {
-  return `https://api.mapbox.com/directions/v5/mapbox/walking/${myLocationLon},${myLocationLat};${currentMarkerLon},${currentMarkerLat}?steps=true&walkway_bias=1&alternatives=true&continue_straight=true&geometries=geojson&overview=full&access_token=${apiKey}&language=${lang}`;
+  return `https://api.mapbox.com/directions/v5/mapbox/walking/${myLocationLon},${myLocationLat};${currentMarkerLon},${currentMarkerLat}?steps=true&walkway_bias=1.0&alternatives=true&continue_straight=true&geometries=geojson&overview=full&access_token=${apiKey}&language=${lang}`;
 };
 
 export {

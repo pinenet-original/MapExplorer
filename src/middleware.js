@@ -5,21 +5,17 @@ const locales = ["lt", "en"];
 
 export const middleware = (req) => {
   const isLogedIn = !!req.cookies.get("MapExplorer");
-
-  if (
-    isLogedIn &&
-    (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register")
-  ) {
-    const clientUrl = `${req.nextUrl.origin}/client`;
-    return NextResponse.redirect(clientUrl);
-  } else if (!isLogedIn && req.nextUrl.pathname === "/client") {
-    const loginUrl = `${req.nextUrl.origin}/login`;
-    return NextResponse.redirect(loginUrl);
-  }
-
   const defaultLocale = locales[0];
   const pathname = req.nextUrl.pathname;
   const locale = req.nextUrl.locale;
+
+  if (isLogedIn && req.nextUrl.pathname === "/") {
+    const clientUrl = `${req.nextUrl.origin}/client`;
+    return NextResponse.redirect(clientUrl);
+  } else if (!isLogedIn && req.nextUrl.pathname === "/client") {
+    const indexUrl = `${req.nextUrl.origin}/`;
+    return NextResponse.redirect(indexUrl);
+  }
 
   if (!locales.includes(locale)) {
     const acceptLanguage = req.headers.get("accept-language");

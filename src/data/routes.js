@@ -1,10 +1,10 @@
 export const route1 = {
-  routeTitle: "Карта Сокровищ",
-  data:[
+  routeTitle: "Карта Sокровищ",
+  data: [
     {
       visible: true,
       markerName: "СУНДУК СОКРОВИЩ",
-      latitude: 55.5986873, 
+      latitude: 55.5986873,
       longitude: 26.4434393,
       reached: false,
       color: "red",
@@ -12,13 +12,13 @@ export const route1 = {
         name: "СУНДУК СОКРОВИЩ",
         descriptionTitle: "НАЙДИ СУНДУК С СОКРОВИЩАМИ",
         descriptionText: "You have reached the СУНДУК СОКРОВИЩ.",
-        video: "https://www.youtube.com/embed/Ur07STsWEEE"
+        video: "https://www.youtube.com/embed/Ur07STsWEEE",
       },
     },
     {
       visible: false,
       markerName: "Ёлка СОКРОВИЩ",
-      latitude: 55.5994223, 
+      latitude: 55.5994223,
       longitude: 26.4418166,
       reached: false,
       color: "blue",
@@ -26,9 +26,9 @@ export const route1 = {
         name: "Ёлка СОКРОВИЩ",
         descriptionTitle: "НАЙДИ ЁЛКУ СОКРОВИЩ",
         descriptionText: "You have reached the Ёлка СОКРОВИЩ.",
-        video: "https://www.youtube.com/embed/vzZ3EvVizPM"
+        video: "https://www.youtube.com/embed/vzZ3EvVizPM",
       },
-    },  
+    },
     {
       visible: false,
       markerName: "ПИРАТСКИЙ ПИТОМЕЦ",
@@ -40,13 +40,13 @@ export const route1 = {
         name: "ПИРАТСКИЙ ПИТОМЕЦ",
         descriptionTitle: "НАЙДИ ПИРАТСКОГО ПИТОМЦА",
         descriptionText: "You have reached the ПИРАТСКИЙ ПИТОМЕЦ.",
-        video: "https://www.youtube.com/embed/b_SMJYzoerY"
+        video: "https://www.youtube.com/embed/b_SMJYzoerY",
       },
-    },  
+    },
     {
       visible: false,
       markerName: "ПИРАТСКАЯ МАШИНА",
-      latitude: 55.5968604, 
+      latitude: 55.5968604,
       longitude: 26.4363053,
       reached: false,
       color: "yellow",
@@ -54,13 +54,11 @@ export const route1 = {
         name: "ПИРАТСКАЯ МАШИНА",
         descriptionTitle: "НАЙДИ ПИРАТСКУЮ МАШИНУ",
         descriptionText: "You have reached the ПИРАТСКАЯ МАШИНА.",
-        video: "https://www.youtube.com/embed/H2-SAXsp8hg"
+        video: "https://www.youtube.com/embed/H2-SAXsp8hg",
       },
     },
-  ]
-}
-
-
+  ],
+};
 
 // export const route2 = {
 //   routeTitle: "Antras Marsrutas",
@@ -90,7 +88,7 @@ export const route1 = {
 //         descriptionTitle: "Chess2 Reached!",
 //         descriptionText: "You have reached the marker.",
 //       },
-//     },  
+//     },
 //     {
 //       visible: false,
 //       markerName: "Techasas2",
@@ -103,7 +101,7 @@ export const route1 = {
 //         descriptionTitle: "Techasas2 Reached!",
 //         descriptionText: "You have reached the marker.",
 //       },
-//     },  
+//     },
 //     {
 //       visible: false,
 //       markerName: "Kebab house2",
@@ -120,6 +118,4 @@ export const route1 = {
 //   ]
 // }
 
-
-
-export const listOfRoutes = [route1]
+export const listOfRoutes = [route1];

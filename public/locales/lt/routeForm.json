@@ -1,0 +1,13 @@
+{
+  "routeTitle": "Maršruto pavadinimas",
+  "color": "Spalva",
+  "latitude": "Platuma",
+  "longitude": "Ilguma",
+  "markerName": "Žymeklio pavadinimas",
+  "videoUrl": "Vaizdo įrašo URL",
+  "name": "Pavadinimas",
+  "descriptionTitle": "Aprašymo pavadinimas",
+  "descriptionText": "Aprašymo tekstas",
+  "visible": "Matomas",
+  "reached": "Pasiektas"
+}

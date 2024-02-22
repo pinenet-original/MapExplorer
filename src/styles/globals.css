@@ -12,6 +12,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: 'Roboto', sans-serif;
+  background-color:  rgb(4 120 87);
 }
 
 .map-container {

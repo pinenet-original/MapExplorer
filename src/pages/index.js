@@ -5,6 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const Home = () => {
   const { t } = useTranslation("common");

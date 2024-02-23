@@ -38,10 +38,28 @@ const AddRoute = ({ routesList, setRouteList, userInfo }) => {
 
   const saveNewRoute = (e) => {
     e.preventDefault();
-    const newRoutesList = [...routesList, newRoute];
+    const newRoutesList = routesList ? [...routesList, newRoute] : [newRoute];
     setRouteList(newRoutesList);
-    setNewRoute(newRoute);
     updateCollection(e);
+    setNewRoute({
+      routeTitle: "",
+      data: [
+        {
+          color: "",
+          latitude: "",
+          longitude: "",
+          markerInfo: {
+            name: "",
+            video: "",
+            descriptionTitle: "",
+            descriptionText: "",
+          },
+          markerName: "",
+          reached: false,
+          visible: true,
+        },
+      ],
+    });
   };
 
   const showFormManager = () => {

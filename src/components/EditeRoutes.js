@@ -64,7 +64,7 @@ const EditeRoutes = ({ routesList, setRouteList, userInfo }) => {
         }`}
       >
         <div className="flex flex-wrap items-center justify-center gap-2 max-w-[900px]">
-          {routesList.map((route, index) => {
+          {routesList?.map((route, index) => {
             return (
               <div
                 className="mb-4 flex flex-col items-center gap-3"

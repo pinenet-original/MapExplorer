@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import Cookie from "js-cookie";
 
 const Header = () => {
   const router = useRouter();
-  const [logedIn, setLogedIn] = useState(null);
   const auth = getAuth();
+
+  const { locale } = router;
+  const [logedIn, setLogedIn] = useState(null);
+  const [langBtnState, setLangBtnState] = useState("ENG");
 
   const handleSignOut = async () => {
     try {
@@ -18,6 +21,22 @@ const Header = () => {
     }
     router.push("/");
   };
+
+  const setLanguage = () => {
+    if (langBtnState === "ENG") {
+      router.push(router.pathname, router.asPath, { locale: "en" });
+    } else {
+      router.push(router.pathname, router.asPath, { locale: "lt" });
+    }
+  };
+
+  useEffect(() => {
+    if (locale === "lt") {
+      setLangBtnState("ENG");
+    } else {
+      setLangBtnState("LT");
+    }
+  }, [locale]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (logedIn) => {
@@ -34,8 +53,14 @@ const Header = () => {
   return (
     <div className="flex justify-between px-5  bg-emerald-700">
       <Link href="/">MapExplorer</Link>
-      <Link href="/client">Client</Link>
       <div>
+        <button
+          className="rounded bg-[#50d71e] hover:bg-blue-600 text-white py-1 px-2 mr-4"
+          onClick={setLanguage}
+          href="/eng"
+        >
+          {langBtnState}
+        </button>
         {logedIn ? (
           <>
             <button

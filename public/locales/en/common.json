@@ -1,4 +1,7 @@
 {
   "hello": "Hello1",
-  "after": "After"
+  "blankPage": "Dashboard Page",
+  "addNewRoute": "Add New Route",
+  "editexistingRoute": "Edit Existing Route",
+  "routeTitle": "Route Title"
 }

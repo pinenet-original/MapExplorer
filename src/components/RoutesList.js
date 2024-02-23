@@ -1,9 +1,8 @@
 import styles from "@/styles/components/routeList.module.scss";
-import { route1, route2, listOfRoutes } from "@/data/routes";
 
 export const RoutesList = ({ routeSetter, routes }) => {
   const routeSelectManager = (idx) => {
-    routeSetter(listOfRoutes[idx]);
+    routeSetter(routes[idx]);
   };
 
   return (

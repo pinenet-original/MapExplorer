@@ -1,4 +1,7 @@
 {
   "hello": "Labas1",
-  "after": "Po"
+  "blankPage": "Kiento Valdymo puslapis",
+  "addNewRoute": "Pridėti naują maršrutą",
+  "editexistingRoute": "Redaguoti esamą maršrutą",
+  "routeTitle": "Maršruto pavadinimas"
 }

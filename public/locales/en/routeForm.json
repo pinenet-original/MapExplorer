@@ -1,0 +1,13 @@
+{
+  "routeTitle": "Route Title",
+  "color": "Color",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "markerName": "Marker Name",
+  "videoUrl": "Video URL",
+  "name": "Name",
+  "descriptionTitle": "Description Title",
+  "descriptionText": "Description Text",
+  "visible": "Visible",
+  "reached": "Reached"
+}

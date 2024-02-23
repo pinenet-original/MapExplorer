@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Form from "./Form";
+import Cookie from "js-cookie";
 
 const SingIn = () => {
   const router = useRouter();
@@ -37,7 +38,13 @@ const SingIn = () => {
 
       if (querySnapshot.empty) {
         const docRef = doc(firestore, "clients", user.uid);
-        await setDoc(docRef, { email, uid: user.uid });
+        await setDoc(docRef, { email, uid: user.uid, routes: [] });
+        const accessToken = user.accessToken;
+        Cookie.set("MapExplorer", accessToken, {
+          expires: 360,
+          secure: true,
+          sameSite: "strict",
+        });
 
         router.push("/client");
       } else {

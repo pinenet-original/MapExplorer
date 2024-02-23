@@ -1,26 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { getClients } from "@/utils/dataGetters";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, docSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
 import IndexLayout from "@/layouts/IndexLayout";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import EditeRoutes from "@/components/EditeRoutes";
+import AddRoute from "@/components/AddRoute";
 
 const client = () => {
   const { t } = useTranslation("common");
   const [userInfo, setUserInfo] = useState(null);
-  const [route, setRoute] = useState([]);
 
-  const updateCollection = async (e) => {
-    e.preventDefault();
-    const docRef = doc(db, "clients", userInfo.uid);
-    await updateDoc(docRef, {
-      route: route,
-      name: "Goga",
-    });
-  };
+  const [routesList, setRouteList] = useState([
+    {
+      routeTitle: "",
+      data: [
+        {
+          color: "",
+          latitude: "",
+          longitude: "",
+          markerInfo: {
+            name: "",
+            video: "",
+            descriptionTitle: "",
+            descriptionText: "",
+          },
+          markerName: "",
+          reached: false,
+          visible: true,
+        },
+      ],
+    },
+  ]);
 
   useEffect(() => {
     const auth = getAuth();
@@ -40,55 +54,47 @@ const client = () => {
       try {
         const docSnap = await getDoc(docRef);
         // client wich is loged in web, firebase collection info
-        // console.log(11, docSnap.data());
+        setRouteList(docSnap.data().routes);
+        console.log(docSnap.data());
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchData();
-  }, [userInfo]);
+  }, [userInfo, setRouteList]);
 
   return (
     <IndexLayout>
-      <div className="w-full h-screen flex flex-col items-center  gap-3 bg-emerald-700">
+      <div className="w-full  flex flex-col items-center  gap-3 bg-emerald-700 px-5">
         <div className="mb-16">
-          <h1 className="text-3xl">Blank Client page</h1>
-          {t("hello")}
+          <h1 className="text-3xl">{t("blankPage")}</h1>
         </div>
         <div>
-          <p>Here will be come content for Client</p>
+          <Link href={`/client/${userInfo && userInfo.uid}`}>
+            <span className="rounded bg-blue-500 hover:bg-blue-600 text-white py-3 px-5">
+              Load Map
+            </span>
+          </Link>
         </div>
         <div>
-          <div className="mb-5">
-            <h1 className="mb-5"> Edit Client Info</h1>
+          <div className="mb-5 max-w-[400px] px-5">
+            <h1 className="mb-5">Client Info</h1>
             <p className="text-white">Client UID: {userInfo && userInfo.uid}</p>
             <p className="text-white">
               Client Email: {userInfo && userInfo.email}
             </p>
           </div>
-          <form>
-            <input
-              type="text"
-              placeholder="Route"
-              value={route}
-              onChange={(e) => setRoute(e.target.value)}
-              className="mb-5"
-            />
-            <div>
-              <button
-                className="rounded bg-blue-500 hover:bg-blue-600 text-white py-1 px-2"
-                onClick={updateCollection}
-              >
-                Update
-              </button>
-            </div>
-          </form>
-        </div>
-        <div>
-          <Link href={`/client/${userInfo && userInfo.uid}`}>
-            Link to clients route
-          </Link>
+          <AddRoute
+            routesList={routesList}
+            setRouteList={setRouteList}
+            userInfo={userInfo}
+          />
+          <EditeRoutes
+            routesList={routesList}
+            setRouteList={setRouteList}
+            userInfo={userInfo}
+          />
         </div>
       </div>
     </IndexLayout>
@@ -99,6 +105,6 @@ export default client;
 
 export const getServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common"])),
+    ...(await serverSideTranslations(locale, ["common", "routeForm"])),
   },
 });

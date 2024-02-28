@@ -55,7 +55,7 @@ const client = () => {
         const docSnap = await getDoc(docRef);
         // client wich is loged in web, firebase collection info
         setRouteList(docSnap.data().routes);
-        console.log(docSnap.data());
+        // console.log(docSnap.data());
       } catch (error) {
         console.log(error);
       }

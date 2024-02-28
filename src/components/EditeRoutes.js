@@ -5,7 +5,6 @@ import { useTranslation } from "next-i18next";
 
 const EditeRoutes = ({ routesList, setRouteList, userInfo }) => {
   const { t } = useTranslation("common", "routeForm");
-
   const [showFormAddNewMarker, setShowFormAddNewMarker] = useState(false);
   const [routeSelected, setRouteSelected] = useState();
   const [newMarker, setNewMarker] = useState({
@@ -23,6 +22,25 @@ const EditeRoutes = ({ routesList, setRouteList, userInfo }) => {
     visible: true,
   });
   const [showForm, setShowForm] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const selectedRouteIndex = routesList.findIndex(
+    (route) => route.id === selectedRoute?.id
+  );
+  const selectedMarkerIndex = selectedRoute?.data.findIndex(
+    (marker) => marker.id === selectedMarker?.id
+  );
+  const index = selectedRoute?.data.findIndex(
+    (marker) => marker.id === selectedMarker?.id
+  );
+
+  const showMarkerListManager = (marker) => {
+    setSelectedMarker(marker);
+  };
+
+  const showRoutesListManager = (route) => {
+    setSelectedRoute(route);
+  };
 
   const updateCollection = async (e) => {
     e.preventDefault();
@@ -51,14 +69,134 @@ const EditeRoutes = ({ routesList, setRouteList, userInfo }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col items-center">
       <div
         className="flex justify-center text-4xl mb-6 cursor-pointer"
         onClick={showFormManager}
       >
         {t("editexistingRoute")}
       </div>
-      <form
+      {selectedMarker ? (
+        <div className="w-full max-w-2xl flex flex-col items-center">
+          <div className="mb-3">
+            <button
+              onClick={() => setSelectedMarker(null)}
+              className="rounded bg-blue-500 hover:bg-blue-600 text-white py-1 px-2"
+            >
+              Back to markers
+            </button>
+          </div>
+          <div className="bg-slate-100 rounded-lg  shadow-lg p-3 flex flex-col gap-2 w-96 mb-3">
+            <div className="flex justify-between">
+              <label className="font-bold">Marker Name: </label>
+              <input
+                className="w-[230px] rounded-lg pl-2"
+                type="text"
+                placeholder="Marker Name"
+                value={selectedMarker.markerName}
+                onChange={(e) => {
+                  const newRoutes = [...routesList];
+                  newRoutes[selectedRouteIndex].data[
+                    selectedMarkerIndex
+                  ].markerName = e.target.value;
+                  setNewMarker(newRoutes);
+                }}
+              />
+            </div>
+            <div className="flex justify-between">
+              <label className="font-bold">Color: </label>
+              <input
+                className="w-[230px] rounded-lg pl-2"
+                type="text"
+                placeholder="Color"
+                value={selectedMarker.color}
+                onChange={(e) => {
+                  const newRoutes = [...routesList];
+                  newRoutes[selectedRouteIndex].data[
+                    selectedMarkerIndex
+                  ].color = e.target.value;
+                  setNewMarker(newRoutes);
+                }}
+              />
+            </div>
+            <div className="flex justify-between">
+              <label className="font-bold">Latitude: </label>
+              <input
+                className="w-[230px] rounded-lg pl-2"
+                type="text"
+                placeholder="Latitude"
+                value={selectedMarker.latitude}
+                onChange={(e) => {
+                  const newRoutes = [...routesList];
+                  newRoutes[selectedRouteIndex].data[
+                    selectedMarkerIndex
+                  ].latitude = e.target.value;
+                  setNewMarker(newRoutes);
+                }}
+              />
+            </div>
+            <div className="flex justify-between">
+              <label className="font-bold">Longitude: </label>
+              {selectedMarker.longitude}
+            </div>
+            <div className="flex flex-col gap-3">
+              <h1 className="text-xl mb-2"> Marker Info</h1>
+              <div className="flex justify-between">
+                <label className="font-bold">Marker name: </label>
+                {selectedMarker.markerInfo.name}
+              </div>
+              <div className="flex justify-between">
+                <label className="font-bold">Video Url: </label>
+                {selectedMarker.markerInfo.video}
+              </div>
+              <div className="flex justify-between">
+                <label className="font-bold">Description Title: </label>
+                {selectedMarker.markerInfo.descriptionTitle}
+              </div>
+              <div className="flex justify-between">
+                <label className="font-bold">Description Text: </label>
+                {selectedMarker.markerInfo.descriptionText}
+              </div>
+            </div>
+          </div>
+          <button
+            className="rounded bg-blue-500 hover:bg-blue-600 text-white py-1 px-2"
+            onClick={(e) => updateCollection(e, index)}
+          >
+            Save Marker
+          </button>
+        </div>
+      ) : selectedRoute ? (
+        <div className="">
+          <button
+            onClick={() => setSelectedRoute(null)}
+            className="rounded bg-blue-500 hover:bg-blue-600 text-white py-1 px-2"
+          >
+            Back to routes
+          </button>
+          {selectedRoute?.data.map((marker, index) => (
+            <div
+              key={index}
+              onClick={() => showMarkerListManager(marker)}
+              className="border-2 w-[200px]  flex items-center justify-center bg-slate-100 rounded-lg shadow-lg m-4 cursor-pointer transition-all duration-300 ease-in-out hover:bg-slate-200 hover:shadow-xl"
+            >
+              {marker.markerName}
+            </div>
+          ))}
+        </div>
+      ) : (
+        routesList.map((route, index) => (
+          <div
+            key={index}
+            onClick={() => showRoutesListManager(route)}
+            className="border-2 w-[200px]  flex items-center justify-center bg-slate-100 rounded-lg shadow-lg m-4 cursor-pointer transition-all duration-300 ease-in-out hover:bg-slate-200 hover:shadow-xl"
+          >
+            {route.routeTitle}
+          </div>
+        ))
+      )}
+
+      {/* <form
         className={`mb-4 bg-slate-100 rounded-lg flex flex-col  shadow-lg p-3 gap-3 transition-all duration-500 ease-in-out ${
           showForm ? "opacity-100" : "h-0 opacity-0   overflow-hidden"
         }`}
@@ -389,7 +527,7 @@ const EditeRoutes = ({ routesList, setRouteList, userInfo }) => {
             Update Collection
           </button>
         </div>
-      </form>
+      </form> */}
     </div>
   );
 };
